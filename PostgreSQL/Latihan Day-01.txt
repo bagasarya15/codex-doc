@@ -1,0 +1,131 @@
+CREATE TABLE category(
+	category_id SERIAL PRIMARY KEY,
+	name VARCHAR(30) NOT NULL,
+	last_update TIMESTAMP NOT NULL DEFAULT NOW()
+)
+
+CREATE TABLE film(
+	film_id SERIAL PRIMARY KEY,
+	title VARCHAR(30) NOT NULL,
+	description TEXT NOT NULL,
+	release_year DATE NOT NULL,
+	language_id INTEGER REFERENCES language(language_id),
+	rental_duration TIMESTAMP NOT NULL,
+	rental_rate NUMERIC(5,2) NOT NULL,
+	length TIME NOT NULL,
+	replacement_cost NUMERIC (5,2) NOT NULL,
+	rating NUMERIC(1,1) NOT NULL,
+	last_update TIMESTAMP NOT NULL DEFAULT NOW(),
+	special_features VARCHAR(100) NOT NULL,
+	fulltext TEXT NOT NULL
+)
+
+CREATE TABLE language(
+	language_id SERIAL PRIMARY KEY,
+	name VARCHAR(30),
+	last_update TIMESTAMP NOT NULL DEFAULT NOW()
+)
+
+CREATE TABLE film_category(
+	film_category_id SERIAL PRIMARY KEY,
+	film_id INTEGER REFERENCES film(film_id),
+	category_id INTEGER REFERENCES category(category_id),
+	last_update TIMESTAMP NOT NULL
+)
+
+CREATE TABLE actor(
+	actor_id SERIAL PRIMARY KEY,
+	first_name VARCHAR(50) NOT NULL,
+	last_name VARCHAR(50) NOT NULL,
+	last_update TIMESTAMP NOT NULL DEFAULT NOW()
+)
+
+CREATE TABLE film_actor(
+	film_actor_id SERIAL PRIMARY KEY,
+	actor_id INTEGER REFERENCES actor(actor_id),
+	film_id INTEGER REFERENCES film(film_id),
+	last_update TIMESTAMP NOT NULL
+)
+
+CREATE TABLE inventory(
+	inventory_id SERIAL PRIMARY KEY,
+	film_id INTEGER REFERENCES film(film_id),
+	store_id INTEGER NOT NULL,
+	last_update TIMESTAMP NOT NULL DEFAULT NOW()
+)
+
+CREATE TABLE customer(
+	customer_id SERIAL PRIMARY KEY,
+	store_id INTEGER NOT NULL,
+	first_name VARCHAR(30),
+	last_name VARCHAR(30),
+	email VARCHAR(30),
+	address_id INTEGER REFERENCES address(address_id),
+	activebol BOOLEAN NOT NULL DEFAULT FALSE,
+	create_date DATE NOT NULL,
+	last_update TIMESTAMP NOT NULL DEFAULT NOW(),
+	active BOOLEAN NOT NULL DEFAULT FALSE
+)
+
+CREATE TABLE address(
+	address_id SERIAL PRIMARY KEY,
+	address VARCHAR(100) NOT NULL,
+	address2 VARCHAR(100) NOT NULL,
+	district VARCHAR(50) NOT NULL,
+	city_id INTEGER REFERENCES city(city_id),
+	postal_code VARCHAR(50) NOT NULL,
+	phone VARCHAR(30) NOT NULL,
+	last_update TIMESTAMP NOT NULL
+)
+
+CREATE TABLE city(
+	city_id SERIAL PRIMARY KEY,
+	city VARCHAR(50) NOT NULL,
+	country_id INTEGER REFERENCES country(country_id),
+	last_update TIMESTAMP NOT NULL
+)
+
+CREATE TABLE country(
+	country_id SERIAL PRIMARY KEY,
+	country VARCHAR(50) NOT NULL,
+	last_update TIMESTAMP NOT NULL
+)
+
+CREATE TABLE staff(
+	staff_id SERIAL PRIMARY KEY,
+	first_name VARCHAR(30),
+	last_name VARCHAR(30),
+	address_id INTEGER REFERENCES address(address_id),
+	email VARCHAR(50) NOT NULL,
+	active BOOLEAN NOT NULL DEFAULT FALSE,
+	username VARCHAR(50) NOT NULL,
+	password VARCHAR(50) NOT NULL,
+	last_update TIMESTAMP NOT NULL,
+	picture VARCHAR(50) NOT NULL DEFAULT 'picture.png'
+)
+
+CREATE TABLE payment(
+	payment_id SERIAL PRIMARY KEY,
+	customer_id INTEGER REFERENCES customer(customer_id),
+	staf_id INTEGER REFERENCES staff(staff_id),
+	rental_id INTEGER REFERENCES rental(rental_id),
+	amount NUMERIC(7,2) NOT NULL,
+	payment_date DATE NOT NULL DEFAULT CURRENT_DATE
+)
+
+CREATE TABLE rental(
+	rental_id SERIAL PRIMARY KEY,
+	rental_date DATE NOT NULL,
+	inventory_id INTEGER REFERENCES inventory(inventory_id),
+	customer_id INTEGER REFERENCES customer(customer_id),
+	return_date DATE NOT NULL,
+	staff_id INTEGER REFERENCES staff(staff_id),
+	last_update TIMESTAMP NOT NULL DEFAULT NOW()
+)
+
+CREATE TABLE store(
+	store_id SERIAL PRIMARY KEY,
+	manager_staff_id INTEGER REFERENCES staff(staff_id),
+	address_id INTEGER REFERENCES address(address_id),
+	last_update TIMESTAMP NOT NULL DEFAULT NOW()
+)
