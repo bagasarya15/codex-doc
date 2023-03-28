@@ -1,0 +1,148 @@
+-- SELECT * FROM sales_item;
+
+-- 1
+SELECT DISTINCT discount FROM sales_item
+WHERE discount > .15
+ORDER BY discount DESC
+
+-- SELECT * FROM sales_order
+
+-- 2
+SELECT * FROM sales_order
+WHERE time_order_taken > '2018-12-01'
+AND time_order_taken < '2018-12-31'
+
+-- SELECT COUNT(id), time_order_taken FROM sales_order
+-- GROUP BY time_order_taken
+-- HAVING time_order_taken > '2018-12-01'
+
+-- 3
+SELECT * FROM sales_order 
+WHERE time_order_taken
+BETWEEN  '2018-12-01' AND '2018-12-31'
+
+-- SELECT * FROM customer
+
+-- 4
+SELECT CONCAT(first_name,' ',last_name) AS name, state
+FROM customer
+WHERE state = 'TX'
+
+-- SELECT * FROM item
+
+-- 5
+SELECT product_id, SUM(price) AS totalPrice 
+FROM item
+GROUP BY product_id
+ORDER BY product_id ASC
+
+-- 6
+SELECT product_id, SUM(price) AS totalPrice
+FROM item
+GROUP BY product_id
+HAVING SUM(price) > 500
+ORDER BY product_id ASC
+
+-- 7
+SELECT product_id,ROUND(AVG(price),2) AS avgPrice
+FROM item
+GROUP BY product_id
+ORDER BY product_id ASC
+
+-- SELECT * FROM customer
+
+-- 8
+SELECT DISTINCT CONCAT(first_name, ' ',last_name) AS name, state FROM customer
+
+-- 2.1
+SELECT DISTINCT COUNT(state) FROM customer
+
+-- 2.2
+SELECT CONCAT(first_name, ' ',last_name) AS name, state 
+FROM customer WHERE state !='CA'
+
+-- 2.3
+SELECT CONCAT(first_name, ' ',last_name) AS name, state 
+FROM customer WHERE state IN ('CA', 'NJ')
+
+-- SELECT (first_name || ' ' || last_name) AS name, state 
+-- FROM customer WHERE state IN ('CA', 'NJ')
+
+-- 2.4
+SELECT MIN(discount) AS discountMin,
+	   MAX(discount) AS discountMax
+FROM sales_item
+
+-- 2.5
+SELECT product_id ,COUNT(id) FROM item
+GROUP BY product_id
+ORDER BY product_id ASC
+			
+-- 2.6
+SELECT * FROM sales_person WHERE EXTRACT(MONTH FROM birth_date) = 12;
+
+-- 2.7
+SELECT * FROM item WHERE price IS NOT NULL
+
+-- 2.8
+SELECT EXTRACT(MONTH FROM birth_date) AS bulan, COUNT(birth_date) AS jumlah
+FROM customer GROUP BY bulan
+HAVING COUNT(birth_date) < 5
+
+-- SELECT * FROM customer WHERE EXTRACT(MONTH FROM birth_date) < 5;
+-- SELECT COUNT(id) FROM customer
+-- WHERE EXTRACT(MONTH FROM birth_date) < 5;
+
+SELECT 
+	product_type.name AS type_produk,
+	product.name AS nama_produk, 
+	product.description AS deskripsi
+FROM
+	product INNER JOIN product_type ON product.type_id = product_type.id
+ORDER BY type_produk, nama_produk ASC
+
+
+-- 1
+SELECT 
+	product.name AS nama_produk,
+	item.price AS harga,
+	item.size AS ukuran,
+	sales_item.discount AS discount
+FROM 
+	product JOIN item ON item.product_id = product.id
+	JOIN sales_item ON sales_item.item_id = item.id
+ORDER BY nama_produk ASC
+
+-- 2
+SELECT
+	product.name AS nama_produk,
+	item.color AS warna,
+	sales_item.quantity AS banyak_item
+FROM 
+	product JOIN item ON item.product_id = product.id
+	JOIN sales_item ON sales_item.item_id = item.id
+ORDER BY nama_produk ASC
+
+--3
+SELECT 
+	product.name AS nama_produk,
+	item.price AS harga,
+	item.size AS ukuran,
+	sales_item.discount AS discount
+FROM 
+	product JOIN item ON item.product_id = product.id
+	JOIN sales_item ON sales_item.item_id = item.id
+WHERE item.price > 120 ORDER BY nama_produk ASC
+
+-- 4
+SELECT 
+	product.name AS nama_produk,
+	item.price AS harga,
+	sales_item.discount AS discount,
+	CONCAT(sales_person.first_name, ' ' , last_name) AS nama_sales
+FROM 
+	product JOIN item ON item.product_id = product.id
+	JOIN sales_item ON sales_item.item_id = item.id
+	JOIN sales_order ON sales_order.id = sales_item.sales_order_id
+	JOIN sales_person ON sales_person.id = sales_order.sales_person_id
+ORDER BY nama_produk ASC

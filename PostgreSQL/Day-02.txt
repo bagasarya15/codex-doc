@@ -1,0 +1,25 @@
+----------Update JOIN 2 Tabel------------
+UPDATE JOIN
+	UPDATE t1 SET t1.c1 = new_value
+FROM t2 WHERE t1.c1 = t2.c2
+-----------------------------------------
+
+LIKE case bersifat sensitif
+ILIKE bersifat case-insensitif ( mengabaikan data yg dicari besar / kecil )
+
+LIMIT 4 OFFSET 3; ( data yang diselect mulai dari baris ke 3 )
+
+FETCH FIRST ROW ONLY ( ambil data yang pertama saja )
+FETCH FIRST 5 ROW ONLY ( select data 5 baris pertama )
+OFFSET 5 ROW FETCH FIRST 5 ROW ONLY ( select 5 data  mulai dari 5 baris sebelumnya )
+
+---------Aggregate Function----------
+AVG(), COUNT(), MAX(), MIN(), SUM()
+-------------------------------------
+ROUND(AVG(),2) = ( memberikan 2 angka dibelakang koma )
+
+NUMERIC(5,2)
+
+123.45
+
+FROM -> SELECT -> WHERE -> GROUP BY -> HAVING -> ORDER BY
