@@ -124,7 +124,8 @@ FROM
 ORDER BY nama_produk ASC
 
 --3
-SELECT 
+SELECT
+	sales_item.id,
 	product.name AS nama_produk,
 	item.price AS harga,
 	item.size AS ukuran,
@@ -132,10 +133,11 @@ SELECT
 FROM 
 	product JOIN item ON item.product_id = product.id
 	JOIN sales_item ON sales_item.item_id = item.id
-WHERE item.price > 120 ORDER BY nama_produk ASC
+WHERE item.price > 120 ORDER BY sales_item.id ASC
 
 -- 4
 SELECT 
+	sales_item.id,
 	product.name AS nama_produk,
 	item.price AS harga,
 	sales_item.discount AS discount,
@@ -145,4 +147,4 @@ FROM
 	JOIN sales_item ON sales_item.item_id = item.id
 	JOIN sales_order ON sales_order.id = sales_item.sales_order_id
 	JOIN sales_person ON sales_person.id = sales_order.sales_person_id
-ORDER BY nama_produk ASC
+ORDER BY sales_item.id ASC
