@@ -1,0 +1,118 @@
+CREATE VIEW data_purchase AS
+SELECT 
+	sales_order.purchase_order_number,
+	customer.company,
+	sales_item.quantity,
+	product.supplier,
+	product.name,
+	item.price,
+	(sales_item.quantity * item.price ) AS total,
+	CONCAT(sales_person.first_name, ' ',sales_person.last_name) AS sales_person
+FROM 
+	sales_order 
+	JOIN customer ON sales_order.cust_id = customer.id
+	JOIN sales_item ON sales_item.sales_order_id = sales_order.id
+	JOIN item ON item.id = sales_item.item_id
+	JOIN sales_person ON sales_person.id = sales_order.sales_person_id
+	JOIN product ON product.id = item.product_id
+ORDER BY purchase_order_number
+
+SELECT * FROM data_purchase
+
+DROP VIEW data_purchase
+
+---------------------FUNCTION---------------------
+CREATE OR REPLACE FUNCTION get_film_count()
+RETURNS INT 
+LANGUAGE plpgsql
+AS
+$$
+DECLARE
+	total_film INTEGER;
+BEGIN	
+	SELECT COUNT(*) INTO total_film
+	FROM film;
+	
+	RETURN total_film;
+END;
+$$;
+
+SELECT get_film_count()
+----------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION get_film_count(len_from int,len_to int)
+RETURNS INT 
+LANGUAGE plpgsql
+AS
+$$
+DECLARE
+	total_film INT;
+BEGIN	
+	SELECT COUNT(*) INTO total_film
+	FROM film
+	WHERE length BETWEEN len_from AND len_to;
+	RETURN total_film;
+END;
+$$;
+
+SELECT get_film_count(40,90)
+-------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION get_film_title_byId(filmId int)
+RETURNS film.title%type
+LANGUAGE plpgsql
+AS
+$$
+DECLARE
+	film_title film.title%type;
+BEGIN	
+	SELECT title INTO film_title
+	FROM film
+	WHERE film_id=filmId;
+	RETURN film_title;
+END;
+$$;
+
+SELECT get_film_title_byId(100)
+
+----------------------------------------------------------
+---------------------------------------------------
+
+SELECT * FROM product
+
+CREATE OR REPLACE FUNCTION get_AllProduk()
+RETURNS SETOF product
+LANGUAGE plpgsql
+AS
+$$
+DECLARE
+	name_product product;
+BEGIN	
+	RETURN QUERY
+	SELECT * FROM product;
+END;
+$$;
+
+--------------------------------------------------------------
+CREATE OR REPLACE FUNCTION get_Produk(productId int)
+RETURNS product.name%type
+LANGUAGE plpgsql
+AS
+$$
+DECLARE
+	name_product product.name%type;
+BEGIN	
+	SELECT name INTO name_product
+	FROM product
+	WHERE id=productId;
+	
+	IF NOT FOUND THEN
+		RAISE 'Product with id % not found',productId;
+	END IF;
+	RETURN name_product;
+END;
+$$;
+
+DROP FUNCTION get_Product(productid integer) 
+
+SELECT * FROM get_Produk(12)

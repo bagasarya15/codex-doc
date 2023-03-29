@@ -1,0 +1,47 @@
+SubQuery adalah query didalam query
+
+Example :
+
+SELECT film_id, title
+	FROM film
+WHERE 
+	film_id IN (
+		SELECT DISTINCT film_id
+		FROM inventory
+	)
+ORDER BY film_id
+
+
+SELECT col1,col2
+FROM tb1
+WHERE
+EXITS 	(
+	SELECT
+	FROM tb2
+	WHERE tb2.id = tb1.id
+);
+
+--EXITS Output berupa TRUE / FALSE
+
+UNION digunakan untuk menggabung data dari dua / lebih statement SELECT.
+
+UNION = Tidak menampilkan data yang duplikat
+UNION ALL = Menampilkan semua data walaupun duplikat
+
+VIEW ( disebut virtual table, karena datanya berasal dari query )
+Example :
+
+CREATE VIEW item_discount AS
+SELECT item.id, price, discount
+
+Untuk menghapus gunakan DROP VIEW tb1
+
+----Function---- 
+Body berisik block yang terdiri dari deklarasi variable dan logic. biasa diawali dengan $$ dan diakhiri $$
+
+$$
+declare
+--var declaration
+begin
+--login
+$$

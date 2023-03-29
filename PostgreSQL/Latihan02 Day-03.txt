@@ -1,0 +1,37 @@
+------------Tanpa Cursor-----------------------
+CREATE OR REPLACE FUNCTION get_AllState()
+RETURNS TABLE (
+		state_name char,
+		id int
+	)
+	LANGUAGE plpgsql
+AS
+$$
+BEGIN
+	RETURN QUERY
+	SELECT customer.state AS state_name,
+		   COUNT(customer.id) AS count_Id
+    FROM customer
+	GROUP BY state;
+END;
+$$;
+----------Dengan Cursor------------------
+CREATE OR REPLACE FUNCTION getAllState_cursor()
+	RETURNS TABLE(state_cus customer.state%type, count_id BIGINT )
+	LANGUAGE plpgsql
+AS
+$$
+DECLARE 
+	cursor_cus  CURSOR FOR
+				SELECT state, COUNT(id) AS count_id FROM customer GROUP BY state ORDER BY state ASC;
+BEGIN
+	OPEN cursor_cus;
+	
+	RETURN QUERY
+		FETCH ALL FROM cursor_cus;
+	CLOSE cursor_cus;
+END;
+$$;
+
+SELECT * FROM getAllState_cursor()
+DROP FUNCTION getAllState_cursor()

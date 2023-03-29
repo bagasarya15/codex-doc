@@ -1,0 +1,213 @@
+----Multi Row
+CREATE OR REPLACE FUNCTION get_DataPurchase()
+RETURNS TABLE (
+		purchase_order_number BIGINT,
+		company VARCHAR,
+		quantity INTEGER,
+		supplier VARCHAR ,
+		name VARCHAR,
+		price NUMERIC,
+		total NUMERIC,
+		sales_person TEXT
+	)
+	LANGUAGE plpgsql
+AS
+$$
+BEGIN
+	RETURN QUERY
+	SELECT 
+		sales_order.purchase_order_number,
+		customer.company,
+		sales_item.quantity,
+		product.supplier,
+		product.name,
+		item.price,
+		(sales_item.quantity * item.price ) AS total,
+		CONCAT(sales_person.first_name, ' ',sales_person.last_name) AS sales_person
+	FROM 
+		sales_order 
+		JOIN customer ON sales_order.cust_id = customer.id
+		JOIN sales_item ON sales_item.sales_order_id = sales_order.id
+		JOIN item ON item.id = sales_item.item_id
+		JOIN sales_person ON sales_person.id = sales_order.sales_person_id
+		JOIN product ON product.id = item.product_id
+	ORDER BY purchase_order_number;
+END;
+$$;
+
+DROP FUNCTION get_DataPurchase()
+SELECT * FROM get_DataPurchase()
+
+--// --// --// --// --// --// --// --// --// --// --// --//
+-- DROP FUNCTION get_DataPurchase_Uppercase()
+---- Multi Row pakai var_r agar bisa menambah uppercase
+CREATE OR REPLACE FUNCTION get_DataPurchase_Uppercase()
+RETURNS TABLE (
+		purchase_order_number BIGINT,
+		company VARCHAR,
+		quantity INTEGER,
+		supplier VARCHAR ,
+		name VARCHAR,
+		price NUMERIC,
+		total NUMERIC,
+		sales_person TEXT
+	)
+	LANGUAGE plpgsql
+AS
+$$
+DECLARE 
+	var_r record;
+BEGIN
+	FOR var_r IN (
+		SELECT 
+			sales_order.purchase_order_number AS purchase_order_number,
+			customer.company AS company,
+			sales_item.quantity AS quantity,
+			product.supplier AS supplier,
+			product.name AS name,
+			item.price AS price,
+			(sales_item.quantity * item.price ) AS total,
+			CONCAT(sales_person.first_name, ' ',sales_person.last_name) AS sales_person
+		FROM 
+			sales_order 
+			JOIN customer ON sales_order.cust_id = customer.id
+			JOIN sales_item ON sales_item.sales_order_id = sales_order.id
+			JOIN item ON item.id = sales_item.item_id
+			JOIN sales_person ON sales_person.id = sales_order.sales_person_id
+			JOIN product ON product.id = item.product_id
+		ORDER BY purchase_order_number
+	) loop
+	purchase_order_number := var_r.purchase_order_number;
+	company := UPPER(var_r.company);
+	quantity := var_r.quantity;
+	supplier := var_r.supplier;
+	name := var_r.name;
+	price := var_r.price;
+	total := var_r.total;
+	sales_person := var_r.sales_person;
+		return next;
+	end loop;
+END;
+$$;
+
+SELECT * FROM get_DataPurchase_Uppercase()
+--// --// --// --// --// --// --// --// --// --// --// --// --// --// --// --// --// --//
+-- Function tanpa deklrasi returns
+--// --// --// --// --// --// --// --// --// --// --// --// --// --// --// --// --// --//
+
+CREATE OR REPLACE FUNCTION get_Product_byId(IN productId INT, OUT productName VARCHAR)
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+	SELECT name INTO productName
+	FROM product
+	WHERE id = productId;
+	IF NOT FOUND THEN
+		RAISE 'Id % Produk tidak ditemukan',productId;
+	END IF;
+		
+END;
+$$;
+
+SELECT get_Product_byId(400)
+--// --// --// --// --// --// --// --// --// --// --// --// --// --// --//
+CREATE OR REPLACE FUNCTION get_ProductStat(
+	OUT min_len INT,
+	OUT max_len INT,
+	OUT avg_len NUMERIC)
+LANGUAGE plpgsql
+AS
+$$
+BEGIN 
+	SELECT min(price),
+		   max(price),
+		   avg(price)::numeric(5,2)
+    INTO min_len, max_len, avg_len
+	FROM item;
+END;
+$$;
+
+SELECT * FROM get_ProductStat()
+--// --// --// --// --// --// --// --// --// --// --// --// --// --// --//
+
+CREATE OR REPLACE FUNCTION get_ProductStat(
+	IN productId INT,
+	OUT min_len INT,
+	OUT max_len INT,
+	OUT avg_len NUMERIC)
+LANGUAGE plpgsql
+AS
+$$
+BEGIN 
+	SELECT min(price),
+		   max(price),
+		   avg(price)::numeric(5,2)
+    INTO min_len, max_len, avg_len
+	FROM item
+	WHERE product_id = productId;
+	
+	IF NOT FOUND THEN
+		RAISE 'Product with id % not found',productId;
+	END IF;
+END;
+$$;
+
+SELECT * FROM get_ProductStat()
+--// --// --// --// --// --// --// --// --// --// --// --// --// --// --//
+-- Function menggunakan cursor
+--// --// --// --// --// --// --// --// --// --// --// --// --// --// --//
+
+SELECT * FROM item
+
+CREATE OR REPLACE FUNCTION item_cursor()
+	RETURNS SETOF item
+	LANGUAGE plpgsql
+AS
+$$
+DECLARE 
+	cursor_item CURSOR FOR
+				SELECT * FROM item ORDER BY id
+				OFFSET 10;
+BEGIN
+	OPEN cursor_item;
+	
+	RETURN QUERY
+		FETCH 10 FROM cursor_item;
+	CLOSE cursor_item;
+END;
+$$;
+
+SELECT * FROM item_cursor()
+------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION get_Customer(date_enter INT)
+RETURNS text
+LANGUAGE plpgsql
+AS
+$$
+DECLARE 
+	full_name text default '';
+	rec_cus record;
+	cur_customer CURSOR(date_enter INT)
+		FOR SELECT CONCAT(first_name, ' ',last_name) AS full_name,
+		date_entered 
+		FROM customer
+		WHERE EXTRACT(YEAR FROM date_entered) = date_enter;
+BEGIN
+	OPEN cur_customer(date_enter);
+	LOOP 
+		FETCH cur_customer INTO rec_cus;
+	EXIT WHEN NOT FOUND;
+	
+		full_name := full_name ||' , '|| rec_cus.full_name ||' : '|| rec_cus.date_entered;
+END LOOP;
+
+CLOSE cur_customer;
+RETURN full_name;
+END;
+$$;
+
+-- DROP FUNCTION get_Customer()
+-- SELECT * FROM customer
+SELECT * FROM get_Customer(2015)
