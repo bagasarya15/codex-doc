@@ -1,0 +1,4 @@
+Procedure -> Tidak menggunakan return
+Function -> Menggunakan return
+
+CREATE OR REPLACE PROCEDURE

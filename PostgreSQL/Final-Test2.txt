@@ -1,0 +1,204 @@
+SELECT * FROM cursorPaginate(29)
+SELECT * FROM humanresources.employee
+SELECT * FROM humanresources.employeedepartmenthistory 
+
+DROP FUNCTION cursorPaginate(num_page INT)
+CREATE OR REPLACE FUNCTION cursorPaginate(num_page INT)
+	RETURNS TABLE(
+		businessentityid 	INT,
+		nationalidnumber 	VARCHAR,
+		firstname			person.person.firstname%TYPE,
+		lastname			person.person.lastname%TYPE,
+		email				person.emailaddress.emailaddress%TYPE,
+		phonecall			person.personphone.phonenumber%TYPE,
+		jobtitle			humanresources.employee.jobtitle%TYPE,
+		birthdate			humanresources.employee.birthdate%TYPE,
+		hiredate			humanresources.employee.hiredate%TYPE,
+		department			humanresources.department.name%TYPE) 
+	LANGUAGE plpgsql
+AS
+$$
+DECLARE -- Untuk deklarasi 
+	cursor_employe CURSOR FOR
+	SELECT
+		 humanresources.employee.businessentityid,
+		 humanresources.employee.nationalidnumber,
+		 person.person.firstname,
+		 person.person.lastname,
+		 person.emailaddress.emailaddress,
+		 person.personphone.phonenumber,
+		 humanresources.employee.jobtitle,
+	     humanresources.employee.birthdate,
+	     humanresources.employee.hiredate,
+	     humanresources.department.name
+	FROM humanresources.employee
+	JOIN person.person ON humanresources.employee.businessentityid = person.person.businessentityid
+	JOIN person.emailaddress ON humanresources.employee.businessentityid = person.emailaddress.businessentityid
+	JOIN person.personphone ON humanresources.employee.businessentityid = person.personphone.businessentityid
+	JOIN humanresources.employeedepartmenthistory ON humanresources.employee.businessentityid = humanresources.employeedepartmenthistory.businessentityid
+    JOIN humanresources.department ON humanresources.employeedepartmenthistory.departmentid = humanresources.department.departmentid
+	WHERE humanresources.employeedepartmenthistory.enddate IS NULL
+	OFFSET (num_page -1 ) * 10; --SELECT 10 baris data dari 10 baris sebelumnya
+BEGIN -- Memulai logic
+	OPEN cursor_employe;
+	
+	RETURN QUERY
+		FETCH 10 FROM cursor_employe; --Beri limit 10 data dari var cursor_employe
+	CLOSE cursor_employe;
+	
+	IF NOT FOUND THEN
+		RAISE 'Halaman % tidak ada', num_page;
+	END IF;
+	
+END; -- Menutup logic
+$$;
+
+CREATE OR REPLACE FUNCTION notCursorPaginate(num_page INT)
+RETURNS TABLE(
+		businessentityid 	INT,
+		nationalidnumber 	VARCHAR,
+		firstname			person.person.firstname%TYPE,
+		lastname			person.person.lastname%TYPE,
+		email				person.emailaddress.emailaddress%TYPE,
+		phonecall			person.personphone.phonenumber%TYPE,
+		jobtitle			humanresources.employee.jobtitle%TYPE,
+		birthdate			humanresources.employee.birthdate%TYPE,
+		hiredate			humanresources.employee.hiredate%TYPE,
+		department			humanresources.department.name%TYPE)  
+	LANGUAGE plpgsql
+AS
+$$
+BEGIN
+	RETURN QUERY
+		SELECT
+		 humanresources.employee.businessentityid,
+		 humanresources.employee.nationalidnumber,
+		 person.person.firstname,
+		 person.person.lastname,
+		 person.emailaddress.emailaddress,
+		 person.personphone.phonenumber,
+		 humanresources.employee.jobtitle,
+	     humanresources.employee.birthdate,
+	     humanresources.employee.hiredate,
+	     humanresources.department.name
+	FROM humanresources.employee
+	JOIN person.person ON humanresources.employee.businessentityid = person.person.businessentityid
+	JOIN humanresources.employeedepartmenthistory ON humanresources.employee.businessentityid = humanresources.employeedepartmenthistory.businessentityid
+    JOIN humanresources.department ON humanresources.employeedepartmenthistory.departmentid = humanresources.department.departmentid
+	JOIN person.personphone ON humanresources.employee.businessentityid = person.personphone.businessentityid
+	JOIN person.emailaddress ON humanresources.employee.businessentityid = person.emailaddress.businessentityid
+	WHERE humanresources.employeedepartmenthistory.enddate IS NULL
+	OFFSET (num_page -1 ) * 10 LIMIT 10;
+		
+	IF NOT FOUND THEN
+		RAISE 'Halaman % tidak ditemukan', page;
+	END IF;
+END;
+$$;
+
+SELECT * FROM notCursorPaginate(1)
+
+
+// Presentasi 
+
+SELECT * FROM cursorPaginate(2,5)
+SELECT * FROM humanresources.employee
+SELECT * FROM humanresources.employeedepartmenthistory 
+
+DROP FUNCTION cursorPaginate(num_page INT, limit_page INT)
+CREATE OR REPLACE FUNCTION cursorPaginate(num_page INT, limit_page INT)
+	RETURNS TABLE(
+		businessentityid 	INT,
+		nationalidnumber 	VARCHAR,
+		firstname			person.person.firstname%TYPE,
+		lastname			person.person.lastname%TYPE,
+		email				person.emailaddress.emailaddress%TYPE,
+		phonecall			person.personphone.phonenumber%TYPE,
+		jobtitle			humanresources.employee.jobtitle%TYPE,
+		birthdate			humanresources.employee.birthdate%TYPE,
+		hiredate			humanresources.employee.hiredate%TYPE,
+		department			humanresources.department.name%TYPE) 
+	LANGUAGE plpgsql
+AS
+$$
+DECLARE -- Untuk deklarasi 
+		cursor_employe CURSOR FOR
+	SELECT
+		 humanresources.employee.businessentityid,
+		 humanresources.employee.nationalidnumber,
+		 person.person.firstname,
+		 person.person.lastname,
+		 person.emailaddress.emailaddress,
+		 person.personphone.phonenumber,
+		 humanresources.employee.jobtitle,
+	     humanresources.employee.birthdate,
+	     humanresources.employee.hiredate,
+	     humanresources.department.name
+	FROM humanresources.employee
+	JOIN person.person ON humanresources.employee.businessentityid = person.person.businessentityid
+	JOIN person.emailaddress ON humanresources.employee.businessentityid = person.emailaddress.businessentityid
+	JOIN person.personphone ON humanresources.employee.businessentityid = person.personphone.businessentityid
+	JOIN humanresources.employeedepartmenthistory ON humanresources.employee.businessentityid = humanresources.employeedepartmenthistory.businessentityid
+    JOIN humanresources.department ON humanresources.employeedepartmenthistory.departmentid = humanresources.department.departmentid
+	WHERE humanresources.employeedepartmenthistory.enddate IS NULL
+	OFFSET (num_page -1 ) * limit_page
+	LIMIT limit_page ; 
+BEGIN -- Memulai logic
+	OPEN cursor_employe;
+	
+	RETURN QUERY
+		FETCH ALL FROM cursor_employe; --Beri limit 10 data dari var cursor_employe
+	CLOSE cursor_employe;
+	
+	IF NOT FOUND THEN
+		RAISE 'Halaman % tidak ada', num_page;
+	END IF;
+	
+END; -- Menutup logic
+$$;
+
+CREATE OR REPLACE FUNCTION notCursorPaginate(num_page INT)
+RETURNS TABLE(
+		businessentityid 	INT,
+		nationalidnumber 	VARCHAR,
+		firstname			person.person.firstname%TYPE,
+		lastname			person.person.lastname%TYPE,
+		email				person.emailaddress.emailaddress%TYPE,
+		phonecall			person.personphone.phonenumber%TYPE,
+		jobtitle			humanresources.employee.jobtitle%TYPE,
+		birthdate			humanresources.employee.birthdate%TYPE,
+		hiredate			humanresources.employee.hiredate%TYPE,
+		department			humanresources.department.name%TYPE)  
+	LANGUAGE plpgsql
+AS
+$$
+BEGIN
+	RETURN QUERY
+		SELECT
+		 humanresources.employee.businessentityid,
+		 humanresources.employee.nationalidnumber,
+		 person.person.firstname,
+		 person.person.lastname,
+		 person.emailaddress.emailaddress,
+		 person.personphone.phonenumber,
+		 humanresources.employee.jobtitle,
+	     humanresources.employee.birthdate,
+	     humanresources.employee.hiredate,
+	     humanresources.department.name
+	FROM humanresources.employee
+	JOIN person.person ON humanresources.employee.businessentityid = person.person.businessentityid
+	JOIN humanresources.employeedepartmenthistory ON humanresources.employee.businessentityid = humanresources.employeedepartmenthistory.businessentityid
+    JOIN humanresources.department ON humanresources.employeedepartmenthistory.departmentid = humanresources.department.departmentid
+	JOIN person.personphone ON humanresources.employee.businessentityid = person.personphone.businessentityid
+	JOIN person.emailaddress ON humanresources.employee.businessentityid = person.emailaddress.businessentityid
+	WHERE humanresources.employeedepartmenthistory.enddate IS NULL
+	OFFSET (num_page -1 ) * 10 
+	LIMIT 10;
+		
+	IF NOT FOUND THEN
+		RAISE 'Halaman % tidak ditemukan', page;
+	END IF;
+END;
+$$;
+
+SELECT * FROM notCursorPaginate(1)

@@ -12,7 +12,11 @@ LIMIT 4 OFFSET 3; ( data yang diselect mulai dari baris ke 3 )
 FETCH FIRST ROW ONLY ( ambil data yang pertama saja )
 FETCH FIRST 5 ROW ONLY ( select data 5 baris pertama )
 OFFSET 5 ROW FETCH FIRST 5 ROW ONLY ( select 5 data  mulai dari 5 baris sebelumnya )
+FETCH  = Limit
+OFFSET = 
 
+OFFSET 5
+FETCH 5
 ---------Aggregate Function----------
 AVG(), COUNT(), MAX(), MIN(), SUM()
 -------------------------------------
