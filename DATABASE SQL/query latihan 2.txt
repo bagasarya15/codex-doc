@@ -1,0 +1,47 @@
+/**
+create table product_type(
+name varchar(30) not null,
+	id serial primary key
+);
+
+create table product(
+type_id integer REFERENCES product_type(id),
+name varchar(30) not null,
+supplier varchar(30) not null,
+description TEXT not null,
+	id serial primary key
+);
+
+create table item(
+product_id integer REFERENCES product(id),
+size integer not null,
+color varchar(30) not null,
+picture varchar(256) not null,
+price numeric (6,2) not null,
+	id serial primary key
+);
+
+create table sales_order(
+cust_id integer REFERENCES customer(id),
+sales_person_id integer REFERENCES sales_person(id),
+time_order_taken timestamp not null,
+purchase_order_number integer not null,
+credit_card_number varchar(16)  not null,
+	credit_card_exper_month smallint  not null,
+	credit_card_exper_day smallint   not null,
+	credit_card_secret_code smallint  not null,
+	name_on_card varchar(100) not null,
+	id serial primary key
+); 
+
+create table sales_item(
+item_id integer REFERENCES item(id),
+sales_order_id integer REFERENCES sales_order(id),
+quantity integer not null,
+discount numeric (3,2) null default 0,
+taxable boolean not null default false,
+sales_tax_rate numeric (5,2) not null default 0,
+id serial primary key
+);
+
+**/

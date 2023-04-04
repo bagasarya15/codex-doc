@@ -1,0 +1,236 @@
+CREATE SCHEMA HumanResource 
+CREATE TABLE Employee(
+	FullName varchar(30),
+	Suffix varchar(10),
+	NationalIDNumber int UNIQUE,
+	BirthDate date,
+	MartialStatus varchar(30),
+	Gender varchar(30),
+	HireDate date,
+	SalaryRate bigint,
+	Frequency int,
+	VacationHours int,
+	SickLeaveHours int,
+	Dapartment varchar(20),	
+	JobTitle varchar(30)	
+)
+
+select * from humanresource.employee
+
+CALL HumanResource.CreateNewEmployee('Nael',
+					'S.T',
+					188766555,
+					'1996-09-21',
+					'Married',
+					'Male',
+					'2020-10-09',
+					5663,
+					2,
+					20,
+					20,
+					'Sales',
+					'JuniorSales'
+						)
+									
+									
+
+CREATE OR REPLACE PROCEDURE HumanResource.CreateNewEmployee( 
+	Full_Name varchar,
+	Suffix_e varchar,
+	National_IDNumber int ,
+	Birth_Date date,
+	Martial_Status varchar,
+	Gender_e varchar,
+	Hire_Date date,
+	Salary_Rate bigint,
+	Frequency_e int,
+	Vacation_Hours int,
+	SickLeave_Hours int,
+	Dapartment_e varchar,	
+	Job_Title varchar	
+)
+	
+	LANGUAGE plpgsql
+	AS
+	$$
+	BEGIN
+	INSERT INTO humanresource.employee (
+	FullName ,
+	Suffix ,
+	NationalIDNumber,
+	BirthDate,
+	MartialStatus,
+	Gender,
+	HireDate,
+	SalaryRate,
+	Frequency,
+	VacationHours,
+	SickLeaveHours,
+	Dapartment,	
+	JobTitle )
+	VALUES
+	(Full_Name,
+	Suffix_e,
+	National_IDNumber ,
+	Birth_Date,
+	Martial_Status,
+	Gender_e,
+	Hire_Date,
+	Salary_Rate,
+	Frequency_e,
+	Vacation_Hours,
+	SickLeave_Hours,
+	Dapartment_e,	
+	Job_Title
+	);
+commit;
+END;
+$$	
+
+
+
+
+
+
+
+----------------------------------------------------------
+
+
+CREATE OR REPLACE PROCEDURE HumanResources.CreateNewEmployee( 
+	business_entityid int,
+	national_idnumber varchar,
+	login_id varchar,
+	job_title varchar,
+	birth_date date,
+	marital_status varchar,
+	gender_e varchar,
+	hire_date date,
+	salari_edflag boolean,
+	vacati_onhours smallint,
+	sick_leavehours smallint,
+	current_flag boolean,
+	modified_date timestamp,
+	organization_node varchar
+)
+	
+	LANGUAGE plpgsql
+	AS $$
+	BEGIN
+	INSERT INTO humanresources.employee (
+	businessentityid,
+	nationalidnumber ,
+	loginid ,
+	jobtitle ,
+	birthdate ,
+	maritalstatus,
+	gender,
+	hiredate,
+	salariedflag,
+	vacationhours,
+	sickleavehours,
+	currentflag,
+	modifieddate,
+	organizationnode )
+	VALUES(
+	business_entityid,
+	national_idnumber ,
+	login_id ,
+	job_title ,
+	birth_date ,
+	marital_status ,
+	gender_e ,
+	hire_date ,
+	salari_edflag ,
+	vacati_onhours ,
+	sick_leavehours ,
+	current_flag ,
+	modified_date ,
+	organization_node 
+	);
+commit;
+END;
+$$	
+
+
+
+
+CAST (business_entityid as int) ,
+	CAST (national_idnumbervarchar as varchar) ,
+	CAST (login_id as varchar) ,
+	CAST (job_title as varchar) ,
+	CAST (birth_date as date) ,
+	CAST (marital_status as char) ,
+	CAST (gender_e as char),
+	CAST (hire_date as date),
+	CAST (salari_edflag as boolean) ,
+	CAST (vacati_onhours as int) ,
+	CAST (sick_leavehours as int) ,
+	CAST (current_flag as boolean),
+	CAST (modified_date as timestamp),
+	CAST (organization_node as varchar)
+
+
+
+
+
+CREATE OR REPLACE PROCEDURE CreateNewEmployee( 
+	business_entityid HumanResources.employee.businessentityid%type,
+	national_idnumber HumanResources.employee.nationalidnumber%type,
+	login_id HumanResources.employee.loginid%type,
+	job_title HumanResources.employee.jobtitle%type,
+	birth_date HumanResources.employee.birthdate%type,
+	marital_status HumanResources.employee.maritalstatus%type,
+	gender_e HumanResources.employee.gender%type,
+	hire_date HumanResources.employee.hiredate%type,
+	salari_edflag HumanResources.employee.salariedflag%type,
+	vacati_onhours HumanResources.employee.vacationhours%type,
+	sick_leavehours HumanResources.employee.sickleavehours%type,
+	current_flag HumanResources.employee.currentflag%type,
+	modified_date HumanResources.employee.modifieddate%type,
+	organization_node HumanResources.employee.organizationnode%type
+)
+	
+	LANGUAGE plpgsql
+	AS $$
+	BEGIN
+	INSERT INTO humanresources.employee (
+	businessentityid,
+	nationalidnumber ,
+	loginid ,
+	jobtitle ,
+	birthdate ,
+	maritalstatus,
+	gender,
+	hiredate,
+	salariedflag,
+	vacationhours,
+	sickleavehours,
+	currentflag,
+	modifieddate,
+	organizationnode )
+	VALUES(
+	CAST (business_entityid as int) ,
+	CAST (national_idnumber as varchar) ,
+	CAST (login_id as varchar) ,
+	CAST (job_title as varchar) ,
+	CAST (birth_date as date) ,
+	CAST (marital_status as char) ,
+	CAST (gender_e as char),
+	CAST (hire_date as date),
+	CAST (salari_edflag as boolean) ,
+	CAST (vacati_onhours as smallint) ,
+	CAST (sick_leavehours as smallint) ,
+	CAST (current_flag as boolean),
+	CAST (modified_date as timestamp),
+	CAST (organization_node as varchar)
+	);
+END;
+$$	
+
+select*from humanresources.employee
+
+call CreateNewEmployee
+	(297::int,'32243473'::varchar,'adventure-works\bagas1'::varchar,
+	 'ProductionTeknik'::varchar,'1998-07-25'::date,'S'::char,
+	 'M'::char,'2006-02-01'::date,False::boolean,80::smallint,10::smallint,True::boolean,
+	 CURRENT_TIMESTAMP::timestamp,'/2/3/2/'::varchar)

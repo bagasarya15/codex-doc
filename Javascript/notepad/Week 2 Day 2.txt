@@ -1,0 +1,44 @@
+Tujuan try catch ( agar program kita tidak terputus ketika ada error )
+
+break; => keluar dahulu dari loop
+continue; => langsung melanjutkan loop
+
+Function Void = Tidak pakai return
+Regular Function = Pakai return
+
+A
+-B
+--C
+---D
+----E
+-----F
+
+const latDiagonal=()=>{
+    let abjad = 26;
+
+    for (let i = 0; i < abjad; i++) {
+        let output = "";
+        for (let j = 0; j < i; j++) {
+            output += " ";
+        }
+        output += String.fromCharCode(65 + i);
+        console.log(output);
+    }
+}
+latDiagonal()
+
+Penjelasan:
+
+for (let i = 0; i < 26; i++) digunakan untuk membuat perulangan dari 0 hingga 25, yang merepresentasikan 26 huruf abjad.
+
+let output = "" digunakan untuk membuat variabel output yang awalnya kosong.
+
+for (let j = 0; j < i; j++) digunakan untuk membuat perulangan sebanyak i kali pada setiap iterasi i di luar perulangan, untuk menambahkan spasi di awal setiap baris output.
+
+output += String.fromCharCode(65 + i) digunakan untuk menambahkan huruf abjad dengan kode ASCII 65 + i ke variabel output.
+
+console.log(output) digunakan untuk mencetak variabel output setiap baris ke konsol
+
+
+
+

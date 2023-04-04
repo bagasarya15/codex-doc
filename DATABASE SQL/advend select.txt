@@ -1,0 +1,21 @@
+SELECT 
+        MAX(CASE WHEN Occupation='Doctor' THEN Name ELSE NULL END) AS 'Doctor',
+        MAX(CASE WHEN Occupation='Professor' THEN Name ELSE NULL END) AS 'Professor',
+        MAX(CASE WHEN Occupation='Singer' THEN Name ELSE NULL END) AS 'Singer',
+        MAX(CASE WHEN Occupation='Actor' THEN Name ELSE NULL END) AS 'Actor' 
+    FROM ( SELECT * , ROW_NUMBER() OVER(PARTITION BY occupation ORDER BY name) AS rnumber 
+          FROM occupations ) sub 
+    GROUP BY rnumber
+
+
+
+select N,IF (P is NULL,'Root', IF(BST.N in (select P from BST),'Inner','Leaf'))
+   FROM BST 
+   ORDER BY N
+
+
+SELECT CONCAT(name,'(',LEFT(occupation,1),')') as name FROM occupations 
+UNION
+SELECT CONCAT('There are a total of ',COUNT(occupation),' ',LOWER(occupation),'s.') as name FROM occupations 
+group by occupation
+order by name asc

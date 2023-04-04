@@ -1,0 +1,385 @@
+CREATE VIEW data_purchase AS
+SELECT 
+	sales_order.purchase_order_number,
+	customer.company,
+	sales_item.quantity,
+	product.supplier,
+	product.name,
+	item.price,
+	(sales_item.quantity*item.price)AS total,
+	CONCAT(sales_person.first_name, ' ' , sales_person.last_name) AS salesperson
+FROM 
+	sales_order
+	JOIN sales_item ON sales_item.sales_order_id = sales_order.id
+	JOIN customer on customer.id = sales_order.cust_id
+	JOIN sales_person ON sales_person.id = sales_order.sales_person_id
+	JOIN item ON item.id = sales_item.item_id
+	JOIN product ON product.id = item.product_id
+
+
+CREATE OR REPLACE FUNCTION get_film_count()
+RETURNS int
+language plpgsql
+as
+$$
+DECLARE
+total_film integer;
+BEGIN
+SELECT COUNT(*)
+INTO total_film
+FROM film;
+
+RETURN total_film;
+END;
+$$
+
+
+/**
+CREATE OR REPLACE FUNCTION get_film_count(len_from int,len_to int)
+RETURNS int
+language plpgsql
+as
+$$
+DECLARE
+	total_film int;
+BEGIN
+	SELECT COUNT(*) INTO total_film
+	FROM film
+	where length between len_from and len_to;
+	RETURN total_film;
+END;
+$$;
+
+select get_film_count(40,90)
+**/
+
+/**
+CREATE OR REPLACE FUNCTION get_film_title(filmId int)
+RETURNS film.title%type
+language plpgsql
+AS
+$$
+DECLARE
+	film_title film.title%type;
+BEGIN
+	SELECT title INTO film_title
+	FROM film
+	WHERE film_id=filmId;
+
+	IF NOT FOUND THEN
+		RAISE 'Film with id % not found',filmId;
+	END IF;
+
+	RETURN film_title;
+END;
+$$;
+
+select get_film_title(100)
+**/
+
+
+>>SEMUA DATA
+
+CREATE OR REPLACE FUNCTION get_product_typeName(typeNameId int)
+RETURNS product
+language plpgsql
+AS
+$$
+DECLARE
+	product_name product;
+BEGIN
+	SELECT * INTO product_name
+	FROM product
+	WHERE id=typeNameId;
+	
+	IF NOT FOUND THEN
+	RAISE 'ID % TIDAK DI TEMUKAN',typeNameId;
+	END IF;
+	
+	RETURN product_name;
+END;
+$$;
+
+
+>>TANPA PARAMETER 1 ROW<<
+
+CREATE OR REPLACE FUNCTION get_product_typeName()
+RETURNS product
+language plpgsql
+AS
+$$
+DECLARE
+	product_name product;
+BEGIN
+	SELECT * INTO product_name
+	FROM product;
+	
+	RETURN product_name;
+END;
+$$;
+
+
+>>MULTIPLE ROW<<
+
+CREATE OR REPLACE FUNCTION get_product_typeName()
+RETURNS SETOF product
+language plpgsql
+AS
+$$
+BEGIN
+	RETURN QUERY
+	SELECT * FROM product;
+END;
+$$;
+
+>>DARI VIEW KE FUNCTION<<
+CREATE OR REPLACE FUNCTION get_purchase_data()
+RETURNS TABLE (
+	purchase_order_number bigint,
+	company varchar,
+	quantity integer,
+	supplier varchar,
+	name varchar,
+	price numeric,
+	total numeric,
+	salesperson text
+	)
+	language plpgsql
+as
+$$
+begin
+ return query
+ SELECT 
+	sales_order.purchase_order_number,
+	customer.company,
+	sales_item.quantity,
+	product.supplier,
+	product.name,
+	item.price,
+	(sales_item.quantity*item.price) AS total,
+ 	CONCAT(sales_person.first_name,' ', sales_person.last_name) AS salesperson
+FROM sales_order
+	JOIN sales_item ON sales_item.sales_order_id = sales_order.id
+	JOIN customer on customer.id = sales_order.cust_id
+	JOIN sales_person ON sales_person.id = sales_order.sales_person_id
+	JOIN item ON item.id = sales_item.item_id
+	JOIN product ON product.id = item.product_id;
+	
+END;
+$$;
+
+
+>>DENGAN VAR_R UNTUK UPPERCASE COLUMN<<
+
+CREATE OR REPLACE FUNCTION get_purchase_data_uppercase()
+RETURNS TABLE (
+	purchase_order_number bigint,
+	company varchar,
+	quantity integer,
+	supplier varchar,
+	name varchar,
+	price numeric,
+	total numeric,
+	salesperson text
+	)
+	language plpgsql
+as
+$$
+declare 
+var_r record;
+begin
+ for var_r in(
+ 	SELECT 
+		sales_order.purchase_order_number as purchase_order,
+		customer.company as company_product,
+		sales_item.quantity as qty,
+		product.supplier as sup,
+		product.name as product_name,
+		item.price as item_price,
+		(sales_item.quantity*item.price) AS total,
+ 		CONCAT(sales_person.first_name,' ', sales_person.last_name) AS salesperson
+	FROM sales_order
+		JOIN sales_item ON sales_item.sales_order_id = sales_order.id
+		JOIN customer on customer.id = sales_order.cust_id
+		JOIN sales_person ON sales_person.id = sales_order.sales_person_id
+		JOIN item ON item.id = sales_item.item_id
+		JOIN product ON product.id = item.product_id
+	 ) loop
+		purchase_order_number := var_r.purchase_order;
+		company  := upper(var_r.company_product);
+		quantity  := var_r.qty;
+		supplier  := upper(var_r.sup);
+		name  := var_r.product_name;
+		price := var_r.item_price;
+		total := var_r.total;
+		salesperson := var_r.salesperson;
+			return next;
+		end loop;
+END;
+$$;
+
+
+
+
+>>TANPA DECLARE TANPA RETURN<<<
+
+CREATE OR REPLACE FUNCTION get_product_byId(in productId int,out productName varchar)
+language plpgsql
+as
+$$
+begin
+	SELECT name INTO productName
+	from product
+	where id = productId;
+end;
+$$;
+
+>>CONTOH LAIN UNTUK MENGETAHUI MIN DAN MAX PRICE<<
+
+CREATE OR REPLACE FUNCTION get_item_statistik(
+	out min_price numeric,
+	out max_price numeric,
+	out avg_price numeric)
+
+language plpgsql
+as
+$$
+begin
+	Select  min(price),
+		max(price),
+		avg(price)::numeric(5,2)
+into min_price,max_price,avg_price
+from item;
+end;
+$$;
+
+
+CREATE OR REPLACE FUNCTION get_item_statistik_name(
+	in productID int,
+	out namaProduk varchar,
+	out min_price numeric,
+	out max_price numeric,
+	out avg_price numeric)
+
+language plpgsql
+as
+$$
+begin
+	Select  product.name,min(price),
+			max(price),
+			avg(price)::numeric(5,2)
+into namaProduk,min_price,max_price,avg_price
+from item
+JOIN product on product.id=item.product_id
+group by product.name,product.id
+having product.id = productID;
+
+end;
+$$;
+
+
+>>CURSOR<<
+
+create or replace function item_cursor()
+returns setof item
+language plpgsql
+as
+$$
+declare
+ cursor_item cursor for 
+ 			select * from item order by id
+			offset 10;
+
+begin
+ open cursor_item;
+ 	return query
+	fetch 10 from cursor_item;
+close cursor_item;
+end;
+$$;
+
+
+
+----------------------------------------
+create or replace function get_customer(date_enter int)
+returns text
+language plpgsql
+as
+$$
+declare
+  fullname text default '';
+  rec_cus record;
+  cur_customer cursor(date_enter int) for
+  	select concat(first_name,' ',last_name)as full_name, date_entered
+	from customer
+	where extract (YEAR FROM date_entered) = date_enter;
+	
+begin
+open cur_customer(date_enter);
+loop
+	fetch cur_customer into rec_cus;
+	exit when not found;
+
+	/**
+	Jika ingin memfilter data dengan like
+	if rec_cus.full_name like '%test%' then
+	end if
+	**/
+
+	fullname := fullname || ' , ' || rec_cus.full_name||' : '||rec_cus.date_entered;
+	end loop;
+
+
+close cur_customer;
+return fullname;
+end;
+$$;
+
+----------------tanpa cursor-----------------
+
+create or replace function get_state_data2()
+returns table (
+cus_state customer.state%type,
+count_id bigint 
+)
+
+language plpgsql
+as
+$$
+begin
+return query
+ select state  , count(customer.id) as id_count from customer
+ group by customer.state
+ order by customer.state;
+
+end;
+$$;
+
+----------dengan cursor----------------------
+
+create or replace function state_cursor()
+returns table (
+cus_state customer.state%type,
+count_id bigint
+)
+language plpgsql
+as
+$$
+declare
+ cursor_state cursor for 
+ 			select state , count(id) as count_id from customer
+			group by state
+			order by state;
+		
+begin
+ open cursor_state;
+ return query
+ fetch all from cursor_state;
+close cursor_state;
+end;
+$$;
+
+
+
+
+

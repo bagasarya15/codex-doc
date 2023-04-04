@@ -1,0 +1,163 @@
+
+tipe data "Serial" sebuah int agar inc
+
+dipostgre tidak ada uuid
+membuat uuid
+create extension if not exists "uuid-oosp"; 
+select uui_generate_v1();
+
+nama_column uui default uui_generate_v4() 
+
+nama_column json not_null
+
+userdefine
+buat constraint 
+
+check(
+	nama_column !~ /s
+	AND nama_column !~ /s
+)
+
+\s adalah space
+
+cara kedua 
+
+create domain nama_domain AS 
+VARCHAR not null check (value !~ '\s');
+
+cara kedua diatas agar tidak boleh ada spasi
+
+RETURNING * ; untuk menampilkan data yng sudah di insert saja
+
+
+update join 
+update t1
+set t1.c1 = new_value
+from t2
+where t1.c1 = t2.c2
+
+
+from > where > select > order by > Having
+urutan eksekusi sql
+
+ILIKE > case insensitif
+LIKE > case sensitif
+
+LIMIT x , untuk menglimit data yang di minta
+LIMIT x OFFSET y , menglimit data dengan offset dimulai dari urutan sesudah yg di offset
+kegunaan untuk paging
+
+
+FETCH FIRST ONLY ROW , cara kerja sama seperti LIMIT
+FETCH FIRST x ROW ONLY , hanya mengselect 5 data row saja 
+
+OFFSET x ROW
+FETCH FIRST x ROW ONLY , mengoffset 5 row terlebih dahulu dan fetch akan menampil urutan dimulai sesudah x
+
+Aggregate Function
+AVG() 
+COUNT()
+MAX()
+MIN()
+SUM()
+
+
+inner join
+select * from inner join b on a.key = b.key
+
+select * from inner join b using(key) >> jika primary key ny sama persis 
+
+left join
+select * from left join b on a.ey = b.key
+
+right join
+select * from right join b on a.ey = b.key
+
+
+
+>>SUB QUERY<<
+SELECT col1,col2
+FROM table
+WHERE
+col1 >(
+	SELECT Aggarate(col) FROM table);
+
+
+>>Metode selain innerjoin <S
+SELECT col1,col2
+FROM table1
+WHERE
+colunm IN >(
+		SELECT column2 from table2)
+ORDER BY column;
+
+>>EXIST<<
+SELECT col1,col2
+FROM table
+WHERE
+EXIST (
+SELECT 1 from payment where payment.customer_id=customer.costumer.id);
+>>EXIST output ny TRUE/FALSE<<
+
+
+>>UNION (Tanpa Duplikat)
+>>UNION ALL (Dengan Duplikat)
+
+SELECT * FROM TABLE
+UNION
+SELECT * FROM TABLE2
+
+
+>>VIEW (VIRTUAL TABLE)
+CREATE VIEW nama_view AS
+SELECT * FROM table
+
+
+>>FUNCTION<<
+
+--HEADER--
+create[or replace] function function_name(parameter_list)
+return return_type
+language plpgsql
+as
+
+--BODY diawal $$ diakhiri $$--
+$$
+declare
+--var dec
+begin
+--main
+end;
+$$
+
+
+-------------------------
+PROCEDURE > TIDAK PAKAI RETURN
+Didalam procedure bisa melakukan rollback
+
+FUNCTION > MEMAKAI RETURN
+
+
+create or replace procedure procedure_name(param_list
+languague
+as
+$$
+declare
+--variable
+begin
+--logic
+
+end;
+$$;
+
+
+
+
+----------------------------
+TRANSACTION
+diawali dengan begin
+diakhir commit
+
+BEGIN
+--LOGIC
+COMMIT;

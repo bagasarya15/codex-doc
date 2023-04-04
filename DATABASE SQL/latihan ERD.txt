@@ -1,0 +1,145 @@
+-- create table category(
+-- category_id serial primary key,
+-- name varchar(30) not null,
+-- last_update timestamp not null default now()
+-- );
+
+-- create table film_category(
+-- film_id integer REFERENCES film(film_id),
+-- category_id integer REFERENCES category(category_id),
+-- last_update timestamp not null default now(),
+-- 	id serial primary key
+-- );
+
+-- create table language(
+-- language_id serial primary key,
+-- name varchar(30) not null,
+-- last_update timestamp not null default now()
+-- );
+
+
+create table film(
+film_id serial primary key,
+title varchar(30) not null,
+description varchar(30) not null,
+release_year date not null,
+language_id integer REFERENCES language(language_id),
+rental_duration timestamp not null,
+rental_rate numeric(5,2) not null,
+length time not null,
+replacement_cost numeric(5,2) not null,
+rating smallint not null,
+last_update timestamp not null default now(),
+special_features varchar(30) not null,
+fulltext text not null
+);
+
+-- create table inventory(
+-- inventory_id serial primary key,
+-- film_id integer REFERENCES film(film_id), 
+-- store_id smallint not null,
+-- last_update timestamp not null default now()
+-- );
+
+
+-- create table actor(
+-- actor_id serial primary key,
+-- first_name varchar(30) not null,
+-- last_name varchar(30) not null,
+-- last_update timestamp not null default now()
+-- );
+
+-- create table film_actor(
+-- actor_id integer REFERENCES actor(actor_id),
+-- film_id integer REFERENCES film(film_id),
+-- last_update timestamp not null default now(),
+-- 	id serial primary key
+-- );
+
+
+-- create table country(
+-- country_id serial primary key,
+-- country varchar(30) not null,
+-- last_update timestamp not null default now()
+-- );
+
+
+-- create table city(
+-- city_id serial primary key,
+-- city varchar(15) not null,
+-- country_id integer REFERENCES country(country_id),
+-- last_update timestamp not null default now()
+-- );
+
+-- create table address(
+-- address_id serial primary key,
+-- address varchar(100) not null,
+-- address2 varchar(100) not null,
+-- district varchar(20) not null,
+-- city_id integer REFERENCES city(city_id),
+-- postal_code varchar(10) not null,
+-- phone varchar(20) not null,
+-- last_update timestamp not null default now()
+-- );
+
+-- create table customer(
+-- customer_id serial primary key,
+-- store_id smallint not null,
+-- first_name varchar(30) not null,
+-- last_name varchar(30) not null,
+-- email varchar(40) not null,
+-- address_id integer REFERENCES address(address_id),
+-- activebool boolean not null default 'false',
+-- create_date date not null,
+-- last_update timestamp not null default now(),
+-- active varchar(10) not null
+-- );
+
+-- create table staff(
+-- staff_id serial primary key,
+-- first_name varchar(30) not null,
+-- last_name varchar(30) not null,
+-- address_id integer REFERENCES address(address_id),
+-- email varchar(40) not null,
+-- store_id smallint not null ,
+-- active varchar(10) not null,
+-- username varchar(20) not null,
+-- password varchar(20) not null,
+-- last_update timestamp not null default now(),
+-- picture varchar(10) not null default 'No Picture'
+-- );
+
+
+
+-- create table store(
+-- store_id serial primary key,
+-- manager_staff_id integer REFERENCES staff(staff_id),
+-- address_id integer REFERENCES address(address_id),
+-- last_update timestamp not null default now()
+-- );
+
+
+-- create table rental(
+-- rental_id serial primary key,
+-- rental_date date not null,
+-- inventory_id integer REFERENCES inventory(inventory_id),
+-- customer_id integer REFERENCES customer(customer_id),
+-- return_date date not null,
+-- staff_id integer REFERENCES staff(staff_id),
+-- last_update timestamp not null default now()
+-- );
+
+
+-- create table payment(
+-- payment_id serial primary key,
+-- customer_id integer REFERENCES customer(customer_id),
+-- staff_id integer REFERENCES staff(staff_id),
+-- rental_id integer REFERENCES rental(rental_id),
+-- amount smallint not null,
+-- payment_date date not null
+-- );
+
+
+
+
+

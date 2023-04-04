@@ -1,0 +1,17 @@
+data type :
+primitive 	= number, string, boolean, null, undefined, symbol, bigInt
+non-primitive 	= object, array, function, date, regex 
+
+Sintaks js mencakup
+whitespace
+statements = kumpulan instruksi / deklrasi variable
+identifiers = pemberian pada sebuah var, fungsi, class, dll  
+comments =
+expresions = example 2 + 1
+keywords
+dinamis = dapat diubah / tidak statis
+
+
+implicit secara otomatis setelah eksekusi kode program, seering disebut coersion
+explicit dilakukan oleh developer, sering disebut typecasting
+

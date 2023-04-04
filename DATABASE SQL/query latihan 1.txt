@@ -1,0 +1,116 @@
+-- create table Links (
+-- link_id serial PRIMARY KEY,
+-- 	title varchar(512) not null,
+-- 	url varchar(1024) not null
+-- );
+
+-- alter table Links
+-- add column target varchar(10);
+
+
+-- alter table Links
+-- alter column target type varchar(50);
+
+
+-- alter table Links
+-- rename column title TO link_title;
+
+
+-- select * from urls;
+
+
+-- alter table Links
+-- alter column target
+-- set default '_blank';
+
+-- alter table Links
+-- rename to urls;
+
+
+-- insert into urls (link_title,url) values ('Test1','www.google.com');
+-- truncate table urls; 
+
+-- will reset serial type from 1
+-- TRUNCATE TABLE urls RESTART IDENTITY; 
+
+
+
+-- create table customers (
+-- id serial PRIMARY KEY,
+-- 	customer_name varchar(512) not null
+-- );
+
+-- select * from customers;
+
+-- insert into customers (customer_name) values ('Apple'),('Samsung'),('Sony');
+
+-- alter table customers
+-- add column contact_name varchar ;
+
+-- alter table customers
+-- alter column contact_name set not null;
+
+-- update customers set contact_name='John Doe' where id='1';
+-- update customers set contact_name='Mary Doe' where id='2';
+-- update customers set contact_name='Lily Bush' where id='3';
+
+/**
+create table publishers (
+publisher_id serial PRIMARY KEY,
+	name varchar not null
+);
+**/
+
+/**
+create table categories (
+category_id serial PRIMARY KEY,
+name varchar not null
+);
+**/
+
+create table books (
+book_id serial primary key,
+	title varchar not null,
+	isbn varchar not null,
+	published_date date not null,
+	description varchar,
+	category_id int not null,
+	publisher_id int not null,
+	foreign key (category_id)
+	 references categories (category_id),
+	foreign key (publisher_id)
+	 references publishers (publisher_id)
+);
+
+select * from books;
+select * from publishers;
+
+drop table books;
+insert into publishers(name)values('bagas');
+
+
+alter table books
+drop CONSTRAINT books_publisher_id_fkey;
+
+alter table books
+drop CONSTRAINT books_category_id_fkey;
+
+alter table books
+add constraint books_publisher_id_fkey
+foreign key (publisher_id)
+references publishers (publisher_id)
+on delete cascade on update no action;
+
+alter table books
+add constraint books_category_id_fkey
+foreign key (category_id)
+references categories (category_id)
+on delete cascade on update no action;
+
+drop table publishers cascade;
+drop table categories cascade;
+
+
+
+
+
