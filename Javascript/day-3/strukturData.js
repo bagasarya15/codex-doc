@@ -2,6 +2,7 @@
 // buah.push('Durian') // push untuk menambah di index terakhir
 // console.log(buah)
 // buah.pop() // menghapus di index terakhir
+// buah.shift() // menghapus di index paling awal
 // console.log(buah)
 // buah.unshift('Durian') // menambah di index paling awal
 // console.log(buah) 
