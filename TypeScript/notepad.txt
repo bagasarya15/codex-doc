@@ -1,0 +1,15 @@
+TypeInference : Langsung kasih value
+TypeAnotation : Diberi type dahulu baru buat value
+
+SET = Input Nilai, GET = Ambil Nilai
+
+Encapsulation :
+Public = Class bisa diakses dari class mana saja
+Protected = Class hanya bisa diakses dari class tersebut dan turunannya
+Private = Class hanya bisa diakses dari class itu sendiri
+
+Overide = Isinya berubah
+Overload = Parameternya berubah
+
+https://www.malasngoding.com/php-oop-part-4-pengertian-enkapsulasi-public-private-protected/
+
