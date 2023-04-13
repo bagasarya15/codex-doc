@@ -159,11 +159,11 @@
 
         //Start Overide
         getTotalVehicle(){ 
-            return `Total Kendaraan : ${super.getTotalVehicle()}`
+            return `Total Keseluruhan Vehicle  : ${super.getTotalVehicle()}`
         }
 
         getTotalIncome(){
-            return `Total Income    : ${super.getTotalIncome()}`
+            return `Total Income Keseluruhan   : ${super.getTotalIncome()}`
         }
         //End Overide
     }
@@ -177,13 +177,15 @@
         }
 
         getTotalVehicle():any{
-            return `Total Kendaraan SUV : ${this.vehicle.filter((vehicle)=>vehicle.vehicleType=='SUV').length}`
+            let result : any = `${this.vehicle.filter((vehicle)=>vehicle.vehicleType=='SUV').length}`
+
+            return `Total Kendaraan SUV : ${result}`
         }
 
         getTotalIncomeVehicle():any{
             let result : any = this.vehicle.filter((vehicle)=>vehicle.vehicleType=='SUV').reduce((previous, current) => previous + current.total, 0)
 
-            return this.numberFormat(result);
+            return `Total Income SUV : ${this.numberFormat(result)}`;
         }
         
     }
@@ -197,14 +199,16 @@
         }
 
         getTotalVehicle():any{
-            return `${this.vehicle.filter((vehicle)=>vehicle.vehicleType=='Taxi').length}`
+            let result : any = `${this.vehicle.filter((vehicle)=>vehicle.vehicleType=='Taxi').length}`
+
+            return `Total Taxi : ${result}`
             
         }
 
         getTotalIncomeVehicle():any{
             let result : any = this.vehicle.filter((vehicle)=>vehicle.vehicleType=='Taxi').reduce((previous, current) => previous + current.total, 0)
             
-            return this.numberFormat(result);
+            return `Total Income Taxi : ${this.numberFormat(result)}`;
         }
     }    
 
@@ -216,35 +220,37 @@
             super(vehicle)
         }
 
-        getTotalVehicle():string
-        getTotalVehicle(type:string):string
-        getTotalVehicle(type?:any):any{
-            if(type){
-                return `${this.vehicle.filter((vehicle)=>vehicle.vehicleType==type).length}`
-            }else{
-                return `${this.vehicle.length}`
-            }
+        getTotalVehicle(){
+            let result: any = `${this.vehicle.filter((vehicle)=>vehicle.vehicleType=='PrivateJet').length}`
+
+            return `Total Private Jet : ${result}`;
         }
 
         getTotalIncomeVehicle():any{
             let result : any = this.vehicle.filter((vehicle)=>vehicle.vehicleType=='PrivateJet').reduce((previous, current) => previous + current.total, 0)
 
-            return this.numberFormat(result);
+            return `Total Income Private Jet : ${this.numberFormat(result)}`;
         }
     }    
 
     let objectSUV = new SUV(vehicle,);
     console.log(objectSUV.getTotalVehicle());
     console.log(objectSUV.getTotalIncomeVehicle());
-    console.log(`-------------------------------------`);
+
+    console.log(`------------------------------------------`);
+
     let objectTaxi = new Taxi(vehicle)
     console.log(objectTaxi.getTotalVehicle());
     console.log(objectTaxi.getTotalIncomeVehicle());
-    console.log(`-------------------------------------`);
+
+    console.log(`------------------------------------------`);
+
     let objectPrivateJet = new PrivateJet(vehicle);
-    console.log(objectPrivateJet.getTotalVehicle('PrivateJet'));
+    console.log(objectPrivateJet.getTotalVehicle());
     console.log(objectPrivateJet.getTotalIncomeVehicle());
-    console.log(`-------------------------------------`);
+
+    console.log(`------------------------------------------`);
+    
     let objectVehicle = new Vehicle(vehicle);
     console.log(objectVehicle.getTotalVehicle()); 
     console.log(objectVehicle.getTotalIncome()); 
