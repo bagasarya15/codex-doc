@@ -10,7 +10,7 @@ abstract class TransportasiClassAbstract {
     }
 
     getInfoPemilik(): string{
-        return `Nama pemilik kendaraan ${this.namaPemilik} telah membayar seharga ${this.getHargaKendaraan}`
+        return `Nama pemilik kendaraan ${this.namaPemilik} telah membayar seharga ${this.getHargaKendaraan()}`
     }
 }
 
@@ -20,6 +20,7 @@ class TransportasiClass extends TransportasiClassAbstract {
     constructor(namaPemilik:string, public nama:string, protected jmlhRoda:number, public jenis:string, public warna:string, public merek:string, public harga: number){
         super(namaPemilik)
     }
+    
     getDiscount():string;
     getDiscount(disc:number):string;
     getDiscount(disc?: any):any{
@@ -70,5 +71,6 @@ class Mobil extends TransportasiClass {
 
 let TransporObj = new Mobil ('Bagas', 'Ayla', 4, 'Minibus', 'Hitam', 'Daihatsu', 100_000_000, 'Bensin', true)
 TransporObj.warna='Abu-Abu Metalic';
+
 (TransporObj.status)?console.log('\n'+TransporObj.getInfoPemilik()+
 '\n',TransporObj.getInfo()+'\n',TransporObj.getDiscount(0.5)+'\n',TransporObj.getStatement()):console.log(TransporObj.getStatement())

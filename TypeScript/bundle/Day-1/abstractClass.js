@@ -7,7 +7,7 @@ class TransportasiClassAbstract {
         return `nama pemilik kendaraan: ${this.namaPemilik}`;
     }
     getInfoPemilik() {
-        return `Nama pemilik kendaraan ${this.namaPemilik} telah membayar seharga ${this.getHargaKendaraan}`;
+        return `Nama pemilik kendaraan ${this.namaPemilik} telah membayar seharga ${this.getHargaKendaraan()}`;
     }
 }
 //Karna abstract tidak bisa instance objek maka harus diturunkan ke class
