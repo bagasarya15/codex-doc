@@ -7,11 +7,11 @@ import bcrypt from 'bcrypt' // install terlebih dahulu npm install bcrypt
 
 const GetUsers = async (req, res)=>{
     try {
-        const result = await models.users.findAll();
+        const data = await models.users.findAll();
 
         res.status(202).json({
             message:"success",
-            data: result
+            data: data
         })
 
         // let succes = {result:result, status:'202', message:'success'}
@@ -39,14 +39,14 @@ const CreateUser = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const passHash = await bcrypt.hash(req.body.pswd, salt)
 
-        const result = await models.users.create({
+        const data = await models.users.create({
             username : req.body.username,
             password : passHash,
         })
 
         res.status(202).json({
-            message:"success",
-            data: result
+            message:"Data user berhasil ditambah",
+            data: data
 
         })
 
@@ -68,7 +68,7 @@ const UpdateUser = async(req,res) => {
             password = passHash
         }
         
-        const result = await models.users.update({
+        const data = await models.users.update({
             username: req.body.username,
             password: password
         },{
@@ -78,8 +78,8 @@ const UpdateUser = async(req,res) => {
         })
 
         res.status(200).json({
-            message: 'Data user berhasil diupdate',
-            data: result
+            message: `Data user id ${data} berhasil diupdate`,
+            data: idBody,
         })
 
     } catch (error) {
@@ -94,11 +94,11 @@ const DeleteUser = async(req,res) => {
 
         await models.users.destroy({
             where:{
-                id: req.params.id
+                id: idBody.id
             }
         })
         res.status(200).json({
-            message: "Data user berhasil dihapus",
+            message: `Data user id ${idBody.id} berhasil dihapus`,
         })
     } catch (error) {
         res.status(400).json({
