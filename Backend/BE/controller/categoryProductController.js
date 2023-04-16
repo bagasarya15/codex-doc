@@ -16,11 +16,18 @@ const GetCategoryProduct = async (req , res)=> {
 const GetCategoryProductById = async (req , res)=> {
     try {
         const data = await models.product_category.findByPk(req.params.id);
+        
+        let succes = {
+            message:'success',
+            status:'202', 
+            result:data, 
+        }
 
-        res.status(202).json({
-            message:"success",
-            data: data
-        })
+        res.status(200).send(succes)
+        // res.status(202).json({
+        //     message:"success",
+        //     data: data
+        // })
     } catch (error) {
         res.send(error.message)
     }

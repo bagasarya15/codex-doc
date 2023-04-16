@@ -8,7 +8,6 @@ import bcrypt from 'bcrypt' // install terlebih dahulu npm install bcrypt
 const GetUsers = async (req, res)=>{
     try {
         const data = await models.users.findAll();
-
         res.status(202).json({
             message:"success",
             data: data
@@ -26,7 +25,11 @@ const GetUsersById = async (req, res)=>{
     try {
         const result = await models.users.findByPk(req.params.id);
         
-        let succes = {result:result, status:'202', message:'success'}
+        let succes = {
+            message:'success',
+            status:'202', 
+            result:result, 
+        }
         res.status(200).send(succes)
 
     } catch (error) {

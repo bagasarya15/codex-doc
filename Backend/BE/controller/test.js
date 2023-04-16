@@ -1,21 +1,25 @@
 import models from "../models/init-models.js";
+import { QueryTypes, Sequelize } from "sequelize"
 
 const GetProduct = async (req, res)=> {
     try {
-        const data = await models.product.findAll({
-            attributes:["name", "description", "price", "image"],
-            include: [{
-                model: models.product_category, as:'category',
-                attributes: ["name"],
-            }]
-        });
-        let succes = {
-            message:'success',
-            result:data, 
-            status:'202', 
-        }
 
-        res.status(200).send(succes)
+        const sequelize = new Sequelize('eProduct', 'postgres', 'mozarl00', {
+            dialect: 'postgresql'
+        });  
+        
+        const data = await sequelize.query(`select product.name as prodName, product_category.name as catName from product
+        join product_category on product.category_id = product_category.id
+        `,{
+            type: QueryTypes.SELECT
+        })
+        // const data = await models.product.findAll();
+
+        let succes = {
+            message: 'success',
+            status: '202', 
+            result: data, 
+        }
 
         res.status(200).send(succes)
     } catch (error) {
@@ -25,32 +29,20 @@ const GetProduct = async (req, res)=> {
 
 const GetProductById = async(req, res) => {
     try {
-        // const data = await models.product.findByPk(req.params.id)
-
-        const data = await models.product.findOne({
-            where:{id: req.params.id},
-            attributes:["name", "description", "price", "image"],
-            include: [{
-                model: models.product_category, as:'category',
-                attributes: ["name"],
-            }]
-        });
-
+        const data = await models.product.findByPk(req.params.id)
         if(!data) throw new Error('Data tidak ditemukan!')
         
         let succes = {
-            message:'success',
-            result:data, 
-            status:'202', 
+            message: 'success',
+            status: '202', 
+            result: data, 
         }
 
         res.status(200).send(succes)
 
-        res.status(200).send(succes)
     } catch (error) {
         res.send(error.message)
-    }
-}
+    }}
 
 const CreateProduct = async (req, res) => {
     try {
