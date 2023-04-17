@@ -1,21 +1,25 @@
-import models  from '../models/init-models.js'
+import models,{sequelize}  from '../models/init-models.js'
 import bcrypt from 'bcrypt' // install terlebih dahulu npm install bcrypt
+// import messageHelper from '../helper/helper.js'
 
-// const getAllUser = async (req, res) => {
-//     result
-// }
+const messageHelper = (result, status, message) => {
+    return {
+        message: message,
+        status: status,
+        result: result,
+    };
+};
 
 const GetUsers = async (req, res)=>{
     try {
         const data = await models.users.findAll();
-        res.status(202).json({
-            message:"success",
-            data: data
-        })
 
-        // let succes = {result:result, status:'202', message:'success'}
-        // res.status(200).send(succes)
-
+        let succes = {
+            message:'success',
+            status:'202', 
+            result:data, 
+        }
+        res.status(200).send(succes)
     } catch (error) {
         res.send(error.message)
     }
@@ -23,19 +27,37 @@ const GetUsers = async (req, res)=>{
 
 const GetUsersById = async (req, res)=>{
     try {
-        const result = await models.users.findByPk(req.params.id);
-        
+        const data = await models.users.findByPk(req.params.id);
+
+        if(!data) throw new Error('Data user tidak ditemukan')
+
         let succes = {
             message:'success',
             status:'202', 
-            result:result, 
+            result:data, 
         }
         res.status(200).send(succes)
-
     } catch (error) {
         res.send(error.message)
     }
 };
+
+const CreateUserCustomer = async (req, res) => {
+    try {
+        const salt = await bcrypt.genSalt(10);
+        const passHash = await bcrypt.hash(req.body.password, salt);
+        req.body.password = passHash;
+
+        const data = `[${JSON.stringify(req.body)}]`;
+
+        const query = `CALL InsertData('${data}')`;
+        const result = await sequelize.query(query);
+
+        res.send(messageHelper(result, 200, "sukses"));
+    } catch (err) {
+        res.send(messageHelper(err.message, 400, "gagal"));
+    }
+}
 
 const CreateUser = async (req, res) => {
     try {
@@ -47,16 +69,39 @@ const CreateUser = async (req, res) => {
             password : passHash,
         })
 
-        res.status(202).json({
-            message:"Data user berhasil ditambah",
-            data: data
-
-        })
+        let succes = {
+            message:'Data users berhasil ditambah',
+            status:'202', 
+            result:data, 
+        }
+        res.status(200).send(succes)
 
     } catch (error) {
         res.send(error.message)
     }
 }
+
+// const CreateUser = async (req, res) => {
+//     try {
+//         const salt = await bcrypt.genSalt(10);
+//         const passHash = await bcrypt.hash(req.body.pswd, salt)
+
+//         const data = await models.users.create({
+//             username : req.body.username,
+//             password : passHash,
+//         })
+
+//         let succes = {
+//             message:'Data users berhasil ditambah',
+//             status:'202', 
+//             result:data, 
+//         }
+//         res.status(200).send(succes)
+
+//     } catch (error) {
+//         res.send(error.message)
+//     }
+// }
 
 const UpdateUser = async(req,res) => {
     try {
@@ -110,11 +155,11 @@ const DeleteUser = async(req,res) => {
     }
 }
 
-
 export default{
     GetUsers,
     GetUsersById,
     CreateUser,
+    CreateUserCustomer,
     UpdateUser,
     DeleteUser
 }
