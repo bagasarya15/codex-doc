@@ -24,7 +24,7 @@
     
     class InfoFurniture extends Furniture
     {
-        constructor(brand: string, model:string, warna:string, public jenisFurniture:string)
+        constructor(brand: string, model:string, warna:string, public jenisFurniture:string)//Acces Modifier
         {
             super(brand, model, warna)
         }

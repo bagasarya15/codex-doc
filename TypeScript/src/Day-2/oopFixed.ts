@@ -1,4 +1,5 @@
 {
+    //Interface dan Abstract untuk standarisasi method 
     interface Ivehicle{
         noPolice?: string;
         vehicleType?: string;
@@ -169,12 +170,12 @@
     }
 
     class SUV extends Vehicle implements Summary{
-        constructor
-        (
-            vehicle: Ivehicle[],
-        ){
-            super(vehicle)
-        }
+        // constructor
+        // (
+        //     vehicle: Ivehicle[],
+        // ){
+        //     super(vehicle)
+        // }
 
         getTotalVehicle():any{
             let result : any = `${this.vehicle.filter((vehicle)=>vehicle.vehicleType=='SUV').length}`
@@ -191,12 +192,12 @@
     }
 
     class Taxi extends Vehicle implements Summary{
-        constructor
-        (
-            vehicle: Ivehicle[],
-        ){
-            super(vehicle)
-        }
+        // constructor
+        // (
+        //     vehicle: Ivehicle[],
+        // ){
+        //     super(vehicle)
+        // }
 
         getTotalVehicle():any{
             let result : any = `${this.vehicle.filter((vehicle)=>vehicle.vehicleType=='Taxi').length}`
@@ -213,12 +214,12 @@
     }    
 
     class PrivateJet extends Vehicle{
-        constructor
-        (
-            vehicle: Ivehicle[],
-        ){
-            super(vehicle)
-        }
+        // constructor
+        // (
+        //     vehicle: Ivehicle[],
+        // ){
+        //     super(vehicle)
+        // }
 
         getTotalVehicle(){
             let result: any = `${this.vehicle.filter((vehicle)=>vehicle.vehicleType=='PrivateJet').length}`
@@ -233,6 +234,7 @@
         }
     }    
 
+    // console.log(vehicle);
     let objectSUV = new SUV(vehicle,);
     console.log(objectSUV.getTotalVehicle());
     console.log(objectSUV.getTotalIncomeVehicle());

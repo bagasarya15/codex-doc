@@ -136,9 +136,12 @@
         }
     }
     class SUV extends Vehicle {
-        constructor(vehicle) {
-            super(vehicle);
-        }
+        // constructor
+        // (
+        //     vehicle: Ivehicle[],
+        // ){
+        //     super(vehicle)
+        // }
         getTotalVehicle() {
             let result = `${this.vehicle.filter((vehicle) => vehicle.vehicleType == 'SUV').length}`;
             return `Total Kendaraan SUV : ${result}`;
@@ -149,9 +152,12 @@
         }
     }
     class Taxi extends Vehicle {
-        constructor(vehicle) {
-            super(vehicle);
-        }
+        // constructor
+        // (
+        //     vehicle: Ivehicle[],
+        // ){
+        //     super(vehicle)
+        // }
         getTotalVehicle() {
             let result = `${this.vehicle.filter((vehicle) => vehicle.vehicleType == 'Taxi').length}`;
             return `Total Taxi : ${result}`;
@@ -162,9 +168,12 @@
         }
     }
     class PrivateJet extends Vehicle {
-        constructor(vehicle) {
-            super(vehicle);
-        }
+        // constructor
+        // (
+        //     vehicle: Ivehicle[],
+        // ){
+        //     super(vehicle)
+        // }
         getTotalVehicle() {
             let result = `${this.vehicle.filter((vehicle) => vehicle.vehicleType == 'PrivateJet').length}`;
             return `Total Private Jet : ${result}`;
@@ -174,6 +183,7 @@
             return `Total Income Private Jet : ${this.numberFormat(result)}`;
         }
     }
+    // console.log(vehicle);
     let objectSUV = new SUV(vehicle);
     console.log(objectSUV.getTotalVehicle());
     console.log(objectSUV.getTotalIncomeVehicle());

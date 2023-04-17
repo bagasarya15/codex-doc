@@ -1,0 +1,183 @@
+
+CREATE OR REPLACE PROCEDURE InsertData(In data Json)
+LANGUAGE plpgsql
+AS $$
+DECLARE 
+    new_user_id INT;
+BEGIN
+    WITH user_id AS (
+        INSERT INTO public.users (username, password)
+        SELECT username, password
+        FROM json_to_recordset(data) customer (username VARCHAR, password TEXT)
+        RETURNING id
+    )
+    SELECT id INTO new_user_id FROM user_id;
+    
+    INSERT INTO customer (firstname, lastname, user_id)
+    SELECT firstname, lastname, new_user_id
+    FROM json_to_recordset(data) customer (firstname VARCHAR, lastname VARCHAR, user_id INT);
+END $$;
+
+---------------------------------------------------------------
+CREATE OR REPLACE PROCEDURE InsertDataUserCustomer(In data Json)
+LANGUAGE plpgsql
+AS $$
+DECLARE 
+    new_user_id INT;
+BEGIN
+    WITH user_id AS (
+        INSERT INTO public.users (username, password)
+        SELECT x.username, x.password
+        FROM json_to_recordset(data) x (username VARCHAR, password TEXT)
+        RETURNING id
+    )
+    SELECT id INTO new_user_id FROM user_id;
+    
+    INSERT INTO customer (firstname, lastname, user_id)
+    SELECT x.firstname, x.lastname, new_user_id
+    FROM json_to_recordset(data) x (firstname VARCHAR, lastname VARCHAR, user_id INT);
+END $$;
+
+-------------------------------------------------------------------
+
+create or replace procedure InsertDataUserCustomer (
+	input_data json
+)
+language plpgsql
+as
+$$
+declare
+	userId int;
+	user_name varchar;
+	pass_word text;
+	first_name varchar;
+	last_name varchar;
+begin
+	user_name := input_data ->> 'username';
+	pass_word := input_data ->> 'password';
+	first_name := input_data ->> 'firstname';
+	last_name := input_data ->> 'lastname';
+
+	with result as(
+		insert into users(username, password) values(user_name,pass_word) returning id
+	)
+	select id into userId from result;
+	
+	insert into customer(firstname, lastname, user_id) values(first_name,last_name,userId);
+-- 	commit;
+end;
+$$;
+
+CALL InsertDataUserCustomer('{
+    "username": "ikhsan_jawa",
+    "password": "ikhsan123",
+    "firstname": "ikhsan",
+    "lastname": "jawa"
+}');
+
+SELECT * FROM users
+SELECT * FROM customer
+
+-------------------------------------------------------------------------------------------------------------------
+
+select * from person.businessentity
+create or replace procedure insertProductVendor(
+	acc_numb varchar,
+	namey varchar,
+	creditrate smallint,
+	preferredvendorstat boolean,
+	actflag boolean,
+	web_url varchar,
+	
+	productId integer,
+	avglead integer,
+	standardPrice numeric,
+	lastreceipt_cost numeric,
+	lastreceipt_date timestamp,
+	min_order integer,
+	max_order integer,
+	on_order integer,
+	unitmeasure char(3)
+)
+language plpgsql
+as
+$$
+declare
+	entityId int;
+begin
+	select * from person.businessentity
+	with result as(
+		insert into person.businessentity(rowguid) 
+		values (default)
+		returning businessentityid
+	)
+	
+	select businessentityid into entityId from result;
+	
+	insert into purchasing.vendor 
+		(businessentityid,
+		 accountnumber,
+		 name,
+		 creditrating,
+		 preferredvendorstatus,
+		 activeflag,
+		 purchasingwebserviceurl)
+	values 
+		(entityId,
+		 acc_numb,
+		 namey,
+		 creditrate,
+		 preferredvendorstat,
+		 actflag,
+		 web_url);
+	
+	insert into purchasing.productvendor 
+		(productid,
+		 businessentityid,
+		 averageleadtime,
+		 standardprice,
+		 lastreceiptcost,
+		 lastreceiptdate,
+		 minorderqty,
+		 maxorderqty,
+		 onorderqty,
+		 unitmeasurecode) 
+	 values
+		(productId,
+		 entityId,
+		 avglead,
+		 standardPrice,
+		 lastreceipt_cost,
+		 lastreceipt_date,
+		 min_order,
+		 max_order,
+		 on_order,
+		 unitmeasure);
+	commit;
+end;
+$$;
+
+select * from purchasing.vendor
+call insertProductVendor(
+ 	 'SAD983EIDHS83S'::varchar(15), --accountnumber
+ 	 'inteeshirt'::varchar(50), --name
+ 	 1::smallInt, --creditrating
+ 	 true::boolean, --preferredvendorstatus
+ 	 true::boolean, --actflag
+ 	 'akjsdasd'::varchar(1024), --weburl
+ 
+	 2::integer, --product id
+	 17::integer, --averageleadtime
+	 1232.23::numeric, --standardprice
+	 342.234::numeric, --lasreceiptcost
+	 current_timestamp::timestamp, --lastreceiptdate
+	 3::int, --minorder
+	 2::int, --maxorder
+	 5::int, --onorder
+	 'CTN'::char(3) --unitmeasurecode
+)
+select * from purchasing.vendor order by businessentityid desc
+
+SELECT setval('person.businessentity_businessentityid_seq', 20777, true);
+
+select * from person.businessentity order by businessentityid desc
