@@ -48,9 +48,9 @@ const CreateUserCustomer = async (req, res) => {
         const passHash = await bcrypt.hash(req.body.password, salt);
         req.body.password = passHash;
 
-        const data = `[${JSON.stringify(req.body)}]`;
+        const users = `[${JSON.stringify(req.body)}]`;
 
-        const query = `CALL InsertData('${data}')`;
+        const query = `CALL InsertData('${users}')`;
         const result = await sequelize.query(query);
 
         res.send(messageHelper(result, 200, "sukses"));
@@ -64,7 +64,7 @@ const CreateUser = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const passHash = await bcrypt.hash(req.body.pswd, salt)
 
-        const data = await models.users.create({
+        const users= await models.users.create({
             username : req.body.username,
             password : passHash,
         })
@@ -72,7 +72,7 @@ const CreateUser = async (req, res) => {
         let succes = {
             message:'Data users berhasil ditambah',
             status:'202', 
-            result:data, 
+            result:users
         }
         res.status(200).send(succes)
 
@@ -81,34 +81,12 @@ const CreateUser = async (req, res) => {
     }
 }
 
-// const CreateUser = async (req, res) => {
-//     try {
-//         const salt = await bcrypt.genSalt(10);
-//         const passHash = await bcrypt.hash(req.body.pswd, salt)
-
-//         const data = await models.users.create({
-//             username : req.body.username,
-//             password : passHash,
-//         })
-
-//         let succes = {
-//             message:'Data users berhasil ditambah',
-//             status:'202', 
-//             result:data, 
-//         }
-//         res.status(200).send(succes)
-
-//     } catch (error) {
-//         res.send(error.message)
-//     }
-// }
-
 const UpdateUser = async(req,res) => {
     try {
-        const idBody = await models.users.findByPk(req.params.id)
-        if(!idBody) throw new Error('ID tidak ditemukan!')
+        const users = await models.users.findByPk(req.params.id)
+        if(!users) throw new Error('ID users tidak ditemukan!')
 
-        let password = idBody.password
+        let password = users.password
         let salt = await bcrypt.genSalt(10)
         let passHash = await bcrypt.hash(req.body.password, salt)
 
@@ -121,13 +99,13 @@ const UpdateUser = async(req,res) => {
             password: password
         },{
             where: {
-                id: idBody.id
+                id: users.id
             }
         })
 
         res.status(200).json({
             message: `Data user id ${data} berhasil diupdate`,
-            data: idBody,
+            data: users,
         })
 
     } catch (error) {
@@ -137,16 +115,16 @@ const UpdateUser = async(req,res) => {
 
 const DeleteUser = async(req,res) => {
     try {
-        const idBody = await models.users.findByPk(req.params.id)
-        if(!idBody) throw new Error('ID tidak ditemukan')
+        const users = await models.users.findByPk(req.params.id)
+        if(!users) throw new Error('ID tidak ditemukan')
 
         await models.users.destroy({
             where:{
-                id: idBody.id
+                id: users.id
             }
         })
         res.status(200).json({
-            message: `Data user id ${idBody.id} berhasil dihapus`,
+            message: `Data user id ${users.id} berhasil dihapus`,
         })
     } catch (error) {
         res.status(400).json({

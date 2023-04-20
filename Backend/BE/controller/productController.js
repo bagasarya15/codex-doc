@@ -1,24 +1,44 @@
 import models from "../models/init-models.js";
 import multer from "multer";
-import path from "path";
+import fs from 'fs';
 
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './image')
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+        cb(null, file.fieldname + '-' + uniqueSuffix + '.' + file.originalname.split('.').pop())
+    }
+})
+        
+const upload = multer({
+    storage: storage,
+    fileFilter: function (req, file, cb) {
+        if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+            return cb(new Error('Hanya file gambar yang diizinkan!'))
+        }
+        cb(null, true)
+    }
+}).single('image')
 
 const GetProduct = async (req, res)=> {
     try {
-        const data = await models.product.findAll({
+        const product = await models.product.findAll({
             attributes:["id","name", "description", "price", "image"],
             include: [{
                 model: models.product_category, as:'category',
                 attributes: ["name"],
             }]
         });
+        
         let succes = {
             message:'success',
-            result:data, 
+            result:product, 
             status:'202', 
         }
 
-        res.status(200).send(succes)
+        res.status(202).send(succes)
     } catch (error) {
         res.send(error.message)
     }
@@ -26,8 +46,7 @@ const GetProduct = async (req, res)=> {
 
 const GetProductById = async(req, res) => {
     try {
-        // const data = await models.product.findByPk(req.params.id)
-        const data = await models.product.findOne({
+        const product = await models.product.findOne({
             where:{id: req.params.id},
             attributes:["name", "description", "price", "image"],
             include: [{
@@ -36,83 +55,28 @@ const GetProductById = async(req, res) => {
             }]
         });
 
-        if(!data) throw new Error('Data produk tidak ditemukan!')
+        if(!product) throw new Error('Data produk tidak ditemukan!')
         
         let succes = {
-            message:'success',
-            result:data, 
-            status:'202', 
+            message :'success',
+            result  :product, 
+            status  :'202', 
         }
-        res.status(200).send(succes)
+        
+        res.status(202).send(succes)
     } catch (error) {
         res.send(error.message)
     }
 }
 
-// const CreateProduct = async (req, res) => {
-//     try {
-//         const storage = multer.diskStorage({
-//             destination: function (req, file, cb) {
-//                 cb(null, './image')
-//             },
-//             filename: function (req, file, cb) {
-//                 const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-//                 cb(null, file.fieldname + '-' + uniqueSuffix)
-//             }
-//         })
-
-//         const upload = multer(req.body.image,{storage: storage})
-
-//         const data = await models.product.create({
-//             name: req.body.name,
-//             description: req.body.description,
-//             category_id: req.body.category_id,
-//             price: req.body.price,
-//             image: upload
-//         })
-
-//         let success = {
-//             message: 'Data produk berhasil ditambahkan',
-//             status: '202',
-//             result: data    
-//         }
-
-//         res.status(202).send(success)
-
-//     } catch (error) {
-//         res.send(error.message)
-//     }
-// }
-
 const CreateProduct = async (req, res) => {
     try {
-        const storage = multer.diskStorage({
-            destination: function (req, file, cb) {
-                cb(null, './image')
-            },
-            filename: function (req, file, cb) {
-                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-                cb(null, file.fieldname + '-' + uniqueSuffix + '.' + file.originalname.split('.').pop())
-            }
-        })
-        
-        const upload = multer({
-            storage: storage,
-            fileFilter: function (req, file, cb) {
-                if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-                    return cb(new Error('Only image files are allowed!'))
-                }
-                cb(null, true)
-            }
-        }).single('image')
-        
-
         upload(req, res, async function (error) {
             if (error instanceof multer.MulterError) {
                 return res.status(500).json({message: 'Error upload gambar'})
             }
 
-            const data = await models.product.create({
+            const product = await models.product.create({
                 name: req.body.name,
                 description: req.body.description,
                 category_id: req.body.category_id,
@@ -121,9 +85,9 @@ const CreateProduct = async (req, res) => {
             })
 
             let success = {
-                message: 'Data produk berhasil ditambahkan',
-                status: '202',
-                result: data    
+                message : 'Data produk berhasil ditambahkan',
+                status  : '202',
+                result  : product    
             }
 
             res.status(202).send(success)
@@ -136,27 +100,39 @@ const CreateProduct = async (req, res) => {
 
 const UpdateProduct = async (req, res) => {
     try {
-        const idBody = await models.product.findByPk(req.params.id)
-        if(!idBody) throw new Error('Id produk tidak ditemukan!')
-
-        const data = await models.product.update({
-            name: req.body.name,
-            description: req.body.description,
-            category_id: req.body.category_id,
-            price: req.body.price,
-            image: req.body.image
-        },{
-            where:{
-                id: idBody.id
+        upload(req, res, async function (error) {
+            if (error instanceof multer.MulterError) {
+                return res.status(500).json({message: 'Error upload gambar'})
             }
+
+            const product = await models.product.findByPk(req.params.id)
+
+            if (!product) throw new Error('Produk tidak ditemukan!')
+
+            // Delete old image file
+            const oldImagePath = './image/' + product.image
+            if (fs.existsSync(oldImagePath)) {
+                fs.unlinkSync(oldImagePath)
+            }
+
+            // Update product data
+            const updatedProduct = await product.update({
+                name: req.body.name,
+                description: req.body.description,
+                category_id: req.body.category_id,
+                price: req.body.price,
+                image: req.file.filename
+            })
+
+            let success = {
+                message : 'Data produk berhasil diperbarui',
+                status  : '202',
+                result  : updatedProduct    
+            }
+
+            res.status(202).send(success)
         })
 
-        let succes = {
-            message: `Data produk ${data} berhasil diupdate`,
-            status: '202',
-            result: idBody
-        }
-        res.status(202).send(succes)
     } catch (error) {
         res.send(error.message)
     }
@@ -164,20 +140,25 @@ const UpdateProduct = async (req, res) => {
 
 const DeleteProduct = async (req, res) => {
     try {
-        const idBody = await models.product.findByPk(req.params.id)
-        if(!idBody) throw new Error('Id product tidak ditemukan')
+        const product = await models.product.findByPk(req.params.id)
 
-        const data = await models.product.destroy({
-            where:{
-                id: idBody.id
-            }
-        })
+        if(!product) throw new Error('Produk tidak ditemukan!')
 
-        let succes = {
-            message: `Data produk berhasil dihapus`,
-            status: '202'
+        // Delete image file
+        const imagePath = './image/' + product.image
+        if (fs.existsSync(imagePath)) {
+            fs.unlinkSync(imagePath)
         }
-        res.status(202).send(succes)
+
+        // Delete product data
+        await product.destroy()
+
+        let success = {
+            message : 'Data produk berhasil dihapus',
+            status  : '202'
+        }
+        
+        res.status(202).send(success)
     } catch (error) {
         res.send(error.message)
     }

@@ -1,33 +1,33 @@
 import models from "../models/init-models.js";
 
-const GetCategoryProduct = async (req , res)=> {
+const GetCategoryProduct = async (req , res) => {
     try {
-        const data = await models.product_category.findAll();
+        const categoryProduct = await models.product_category.findAll();
 
-        res.status(202).json({
-            message:"success",
-            data: data
-        })
+        let succes = {
+            message : "success",
+            status  : '202',
+            result  : categoryProduct
+        }
+
+        res.status(202).send(succes)
     } catch (error) {
         res.send(error.message)
     }
 }
 
-const GetCategoryProductById = async (req , res)=> {
+const GetCategoryProductById = async (req , res) => {
     try {
-        const data = await models.product_category.findByPk(req.params.id);
-        
+        const categoryProduct = await models.product_category.findByPk(req.params.id);
+        if(!categoryProduct) throw new Error('Kategori produk tidak ditemukan!')
+
         let succes = {
-            message:'success',
-            status:'202', 
-            result:data, 
+            message : 'success',
+            status  : '202', 
+            result  : categoryProduct, 
         }
 
-        res.status(200).send(succes)
-        // res.status(202).json({
-        //     message:"success",
-        //     data: data
-        // })
+        res.status(202).send(succes)
     } catch (error) {
         res.send(error.message)
     }
@@ -35,41 +35,44 @@ const GetCategoryProductById = async (req , res)=> {
 
 const CreateCategoryProduct = async (req, res) => {
     try {
-        const data = await models.product_category.create({
-            name: req.body.name,
-            description: req.body.description
+        const categoryProduct = await models.product_category.create({
+            name        : req.body.name,
+            description : req.body.description
         })
 
-        res.status(202).json({
-            message:"Data category berhasil ditambah",
-            data: data
-        })
+        let succes = {
+            message : 'Kategori produk berhasil ditambah!',
+            status  : '202',
+            result  : categoryProduct
+        }
 
+        res.status(202).send(succes)
     } catch (error) {
         res.send(error.message)
     }
 }
 
-const UpdateCategoryProduct = async (req, res) =>{
+const UpdateCategoryProduct = async (req, res) => {
     try {
-        const idBody = await models.product_category.findByPk(req.params.id)
-        if(!idBody) throw new Error('ID tidak ditemukan!')
+        const categoryProduct = await models.product_category.findByPk(req.params.id)
+        if(!categoryProduct) throw new Error('Kategori produk tidak ditemukan!')
 
-        const data = await models.product_category.update({
-            name:req.body.name,
-            description:req.body.description
+        await models.product_category.update({
+            name        :req.body.name,
+            description :req.body.description
         },{
             where:{
-                id: idBody.id
+                id  : categoryProduct.id
             }
         })
 
-        res.status(202).json({
-            message:"Data category berhasil diupdate",
-            data: idBody,
-            result: data
-        })
+        let succes = {
+            message : `Data kategori produk  id : ${categoryProduct.id} berhasil diperbarui!`,
+            status  : '202',
+            result  : categoryProduct
+        }
 
+        res.status(202).send(succes)
     } catch (error) {
         res.send(error.message)
     }
@@ -77,21 +80,23 @@ const UpdateCategoryProduct = async (req, res) =>{
 
 const DeleteCategoryProduct = async(req, res) => {
     try {
-        const idBody = await models.product_category.findByPk(req.params.id)
-        if(!idBody) throw new Error('ID tidak ditemukan')
+        const categoryProduct = await models.product_category.findByPk(req.params.id)
+        if(!categoryProduct) throw new Error('Kategori produk tidak ditemukan!')
 
         await models.product_category.destroy({
             where:{
-                id: idBody.id
+                id  : categoryProduct.id
             }
         })
-        res.status(200).json({
-            message: `Data product id ${idBody.id} berhasil dihapus`,
-        })
+
+        let succes = {
+            message : `Kategori produk id : ${categoryProduct.id} berhasil dihapus!`,
+            status  : '202',
+        }
+
+        res.status(202).send(succes)
     } catch (error) {
-        res.status(400).json({
-            message: error.message
-        })
+        res.send(error.message)
     }
 }
 
