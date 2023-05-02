@@ -6,7 +6,6 @@ const messageHelper = (result, status, message) => {
     };
 };
 
-// export default {
-// messageHelper,
-// }
-export default {messageHelper}
+export default {
+    messageHelper,
+}

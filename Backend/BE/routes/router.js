@@ -3,12 +3,10 @@ import userController from "../controller/userController.js"
 import categoryProductController from "../controller/categoryProductController.js"
 import productController from "../controller/productController.js"
 import customerController from "../controller/customerController.js"
+import ordersController from "../controller/ordersController.js"
+import orderDetailController from "../controller/orderDetailController.js"
 
 const router = Router()
-
-router.get("/",(req, res)=>{
-    res.send("Hello Bagas")
-})
 
 //Route User
 router.get('/user', userController.GetUsers)
@@ -39,7 +37,14 @@ router.post('/product', productController.CreateProduct)
 router.put('/product/:id', productController.UpdateProduct)
 router.delete('/product/:id', productController.DeleteProduct)
 
-//Route Order
+//Route Orders
+router.get('/orders', ordersController.GetOrders)
+router.get('/orders/:id', ordersController.GetOrdersById)
+router.post('/orders', ordersController.CreateOrders)
+router.put('/orders/:id', ordersController.UpdateOrders)
+router.delete('/orders/:id', ordersController.DeleteOrders)
 
 //Route Order Detail
+router.get('/order-detail', orderDetailController.GetOrderDetail)
+
 export default router

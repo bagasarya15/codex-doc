@@ -12,13 +12,14 @@ const messageHelper = (result, status, message) => {
 
 const GetUsers = async (req, res)=>{
     try {
-        const data = await models.users.findAll();
+        const users = await models.users.findAll();
 
         let succes = {
-            message:'success',
-            status:'202', 
-            result:data, 
+            message :'success',
+            status  :'202', 
+            result  : users, 
         }
+
         res.status(200).send(succes)
     } catch (error) {
         res.send(error.message)
@@ -27,15 +28,16 @@ const GetUsers = async (req, res)=>{
 
 const GetUsersById = async (req, res)=>{
     try {
-        const data = await models.users.findByPk(req.params.id);
+        const users = await models.users.findByPk(req.params.id);
 
-        if(!data) throw new Error('Data user tidak ditemukan')
+        if(!users) throw new Error('Data user tidak ditemukan')
 
         let succes = {
-            message:'success',
-            status:'202', 
-            result:data, 
+            message :'success',
+            status  :'202', 
+            result  : users, 
         }
+
         res.status(200).send(succes)
     } catch (error) {
         res.send(error.message)
@@ -46,16 +48,16 @@ const CreateUserCustomer = async (req, res) => {
     try {
         const salt = await bcrypt.genSalt(10);
         const passHash = await bcrypt.hash(req.body.password, salt);
+        
         req.body.password = passHash;
 
         const users = `[${JSON.stringify(req.body)}]`;
-
-        const query = `CALL InsertData('${users}')`;
+        const query = `CALL InsertDataUserCustomer('${users}')`;
         const result = await sequelize.query(query);
 
-        res.send(messageHelper(result, 200, "sukses"));
-    } catch (err) {
-        res.send(messageHelper(err.message, 400, "gagal"));
+        res.send(messageHelper("Insert procedure data berhasil", 202, result));
+    } catch (error) {
+        res.send(messageHelper("Insert procedure data gagal", 500, error.message ));
     }
 }
 
@@ -64,7 +66,7 @@ const CreateUser = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const passHash = await bcrypt.hash(req.body.pswd, salt)
 
-        const users= await models.users.create({
+        const users = await models.users.create({
             username : req.body.username,
             password : passHash,
         })
@@ -74,8 +76,8 @@ const CreateUser = async (req, res) => {
             status:'202', 
             result:users
         }
-        res.status(200).send(succes)
 
+        res.status(202).send(succes)
     } catch (error) {
         res.send(error.message)
     }
@@ -94,7 +96,7 @@ const UpdateUser = async(req,res) => {
             password = passHash
         }
         
-        const data = await models.users.update({
+        await models.users.update({
             username: req.body.username,
             password: password
         },{
@@ -103,11 +105,13 @@ const UpdateUser = async(req,res) => {
             }
         })
 
-        res.status(200).json({
-            message: `Data user id ${data} berhasil diupdate`,
-            data: users,
-        })
-
+        let succes = {
+            message : `Data user id ${users.id} berhasil diupdate`,
+            status  : '202',
+            result  :  users,
+        }
+        
+        res.status(202).send(succes)
     } catch (error) {
         res.send(error.message)
     }
@@ -123,13 +127,15 @@ const DeleteUser = async(req,res) => {
                 id: users.id
             }
         })
-        res.status(200).json({
-            message: `Data user id ${users.id} berhasil dihapus`,
-        })
+
+        let succes = {
+            message : `Data user id ${users.id} berhasil dihapus`,
+            status  : '202'
+        }
+
+        res.status(202).send(succes)
     } catch (error) {
-        res.status(400).json({
-            message: error.message
-        })
+        res.send(error.message)
     }
 }
 

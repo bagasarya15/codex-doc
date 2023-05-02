@@ -33,9 +33,9 @@ const GetProduct = async (req, res)=> {
         });
         
         let succes = {
-            message:'success',
-            result:product, 
-            status:'202', 
+            message :'success',
+            result  :product, 
+            status  :'202', 
         }
 
         res.status(202).send(succes)
@@ -58,9 +58,9 @@ const GetProductById = async(req, res) => {
         if(!product) throw new Error('Data produk tidak ditemukan!')
         
         let succes = {
-            message :'success',
-            result  :product, 
-            status  :'202', 
+            message : 'success',
+            result  : product, 
+            status  : '202', 
         }
         
         res.status(202).send(succes)
@@ -72,20 +72,41 @@ const GetProductById = async(req, res) => {
 const CreateProduct = async (req, res) => {
     try {
         upload(req, res, async function (error) {
-            if (error instanceof multer.MulterError) {
-                return res.status(500).json({message: 'Error upload gambar'})
+            
+            const checkProduct= await models.product.findOne({
+                where: { name: req.body.name }
+            });
+
+            if (checkProduct) {
+                return res.status(400).json({ 
+                    message : 'Produk sudah ada, coba buat dengan nama produk yang berbeda!', 
+                });
+            }
+            
+            const categoryBody = await req.body.category_id
+            
+            if(categoryBody == '') {
+                return res.status(500).json({
+                    message: 'Category tidak boleh kosong!'
+                })
             }
 
+            if (error instanceof multer.MulterError) {
+                return res.status(500).json({
+                    message: 'Gagal mengupload gambar!'
+                })
+            }
+            
             const product = await models.product.create({
                 name: req.body.name,
                 description: req.body.description,
-                category_id: req.body.category_id,
+                category_id: categoryBody,
                 price: req.body.price,
                 image: req.file.filename
             })
 
             let success = {
-                message : 'Data produk berhasil ditambahkan',
+                message : 'Data produk berhasil ditambah',
                 status  : '202',
                 result  : product    
             }
@@ -102,14 +123,16 @@ const UpdateProduct = async (req, res) => {
     try {
         upload(req, res, async function (error) {
             if (error instanceof multer.MulterError) {
-                return res.status(500).json({message: 'Error upload gambar'})
+                return res.status(500).json({
+                    message: 'Gagal mengupload gambar!'
+                })
             }
 
             const product = await models.product.findByPk(req.params.id)
 
             if (!product) throw new Error('Produk tidak ditemukan!')
 
-            // Delete old image file
+            // Delete gambar sebelumnya
             const oldImagePath = './image/' + product.image
             if (fs.existsSync(oldImagePath)) {
                 fs.unlinkSync(oldImagePath)
@@ -144,7 +167,7 @@ const DeleteProduct = async (req, res) => {
 
         if(!product) throw new Error('Produk tidak ditemukan!')
 
-        // Delete image file
+        // Delete gambar
         const imagePath = './image/' + product.image
         if (fs.existsSync(imagePath)) {
             fs.unlinkSync(imagePath)
@@ -157,7 +180,7 @@ const DeleteProduct = async (req, res) => {
             message : 'Data produk berhasil dihapus',
             status  : '202'
         }
-        
+
         res.status(202).send(success)
     } catch (error) {
         res.send(error.message)
