@@ -181,3 +181,22 @@ select * from purchasing.vendor order by businessentityid desc
 SELECT setval('person.businessentity_businessentityid_seq', 20777, true);
 
 select * from person.businessentity order by businessentityid desc
+
+CREATE OR REPLACE PROCEDURE InsertDataUserCustomer(In data Json)
+LANGUAGE plpgsql
+AS $$
+DECLARE 
+    new_user_id INT;
+BEGIN
+    WITH user_id AS (
+        INSERT INTO public.users (username, password)
+        SELECT x.username, x.password
+        FROM json_to_recordset(data) x (username VARCHAR, password TEXT)
+        RETURNING id
+    )
+    SELECT id INTO new_user_id FROM user_id;
+    
+    INSERT INTO customer (firstname, lastname, user_id)
+    SELECT x.firstname, x.lastname, new_user_id
+    FROM json_to_recordset(data) x (firstname VARCHAR, lastname VARCHAR, user_id INT);
+END $$;
