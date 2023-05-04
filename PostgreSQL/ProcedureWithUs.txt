@@ -200,3 +200,62 @@ BEGIN
     SELECT x.firstname, x.lastname, new_user_id
     FROM json_to_recordset(data) x (firstname VARCHAR, lastname VARCHAR, user_id INT);
 END $$;
+
+select * from orders
+	select * from product
+select * from order_detail
+TRUNCATE TABLE orders RESTART IDENTITY CASCADE;
+
+CREATE OR REPLACE PROCEDURE InsertOrders (In data json)
+language plpgsql
+as
+$$
+declare oDetailId int;
+
+BEGIN
+with orders_id as(
+insert into public.orders(user_id,totalproduct,totalprice)
+	select x.user_id,x.totalproduct,x.totalprice from json_to_recordset(data) x
+	(
+		user_id int,
+	    totalproduct int,
+		totalprice int
+	)
+returning id)
+select id into oDetailId from orders_id;
+
+insert into order_detail(order_id,product_id,quantity) 
+select oDetailId,x.product_id,x.quantity from json_to_recordset(data) x
+(
+order_id int,
+	product_id int,
+	quantity int
+);
+
+END
+$$
+
+CREATE OR REPLACE PROCEDURE InsertOrderxDetail (In data1 json, In data2 json)
+language plpgsql
+as
+$$
+declare new_order_id int;
+
+BEGIN
+with order_id as(
+insert into public.orders(user_id,totalproduct,totalprice)
+	select x.user_id, x.totalproduct, x.totalprice from json_to_recordset(data1) x
+	(
+		user_id int, totalproduct int, totalprice int
+	)
+returning id)
+select id into new_order_id from order_id;
+
+insert into order_detail(order_id, product_id, quantity) 
+select new_order_id, x.product_id, x.quantity from json_to_recordset(data2) x
+(
+	order_id int, product_id int,quantity int
+);
+
+END
+$$

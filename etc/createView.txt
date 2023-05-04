@@ -1,0 +1,44 @@
+select * from orders
+select * from order_detail
+select * from users
+select * from product
+select * from product_category
+select * from customer
+
+CREATE VIEW selectView AS
+SELECT 
+	users.username,
+	customer.firstname,
+	customer.lastname,
+	product.name AS nama_product,
+	product_category.name AS category,
+	orders.totalproduct,
+	orders.totalprice,
+	order_detail.quantity
+FROM users
+JOIN customer ON customer.user_id = users.id
+JOIN orders ON orders.user_id = users.id
+JOIN order_detail ON order_detail.order_id = orders.id
+JOIN product ON order_detail.product_id	= product.id
+JOIN product_category ON product.category_id = product.id
+
+CREATE VIEW selectView AS
+SELECT 
+	users.id,
+	users.username,
+	customer.firstname,
+	customer.lastname,
+	product.name AS nama_product,
+	product_category.name AS category,
+	orders.totalproduct,
+	orders.totalprice,
+	order_detail.quantity
+FROM users
+JOIN customer ON customer.user_id = users.id
+JOIN orders ON orders.user_id = users.id
+JOIN order_detail ON order_detail.order_id = orders.id
+JOIN product ON order_detail.product_id	= product.id
+JOIN product_category ON product.category_id = product.id
+
+DROP VIEW selectView
+SELECT * FROM selectView

@@ -1,0 +1,42 @@
+cara pengerjaan server di BackEnd
+1.bikin module nya terlebih dahulu
+2.install npm init -y gunanya adalah untuk menginstall library Package.json
+3.apabila sudah tampil package.json nya maka install juga 'npm i dotenv' express karena buat penyimpanan storage di .env dan bisa di edit di file .env bagian port atau variable lainny,
+4.install npm i nodemon adalah supaya server tetap berjalan ketika file telah disimpan,apabila sudah menginstall nodemonny maka tambahkan di package.json nya bagian bawah script."start:nodemon server.js(file asal)"
+	(apabila belum diinstall node mon ny,pncet ctrl c,matikan server ny terlebih dahulu sebelum servernya dijalankan kembali)
+5.apabila sudah,maka buat di router.js nya
+router.get("/",(req,res) => {       //kalau menampilkan  slide apabila ingin membuat server di local host
+    res.send("selamat belajar BackEnd")
+}) gunanya adalah untuk mengakses di local host server
+
+6.apabila sudah melakukan langkah diatas lakukan lagi di router.js nya
+router.get("/user",(req,res)=> {        //kalau mau respone lewat user melalui ini
+    res.send("menampilkan data User")
+}) gunanya adalah melakukan respon lewat user
+
+7.export default "variable" gunanya adalah untuk mengexport data ke server.js yang kita buat
+8.import{Sequelize} from "sequelize";
+
+const sequelize = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
+  {
+    dialect:"postgres",
+    pool:{
+      max:5,
+      min:0,
+      acquire:30000,
+      idle:10000
+    }
+  }
+)
+ubah di code paling bawa ny yang sebelumnya
+module.exports = initModels;
+module.exports.initModels = initModels;
+module.exports.default = initModels;
+menjadi
+const models=initModels(sequelize)
+export default models;
+ masukan ke init model di model JS nya
+9.install 
