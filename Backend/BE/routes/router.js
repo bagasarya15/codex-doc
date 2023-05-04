@@ -5,11 +5,15 @@ import productController from "../controller/productController.js"
 import customerController from "../controller/customerController.js"
 import ordersController from "../controller/ordersController.js"
 import orderDetailController from "../controller/orderDetailController.js"
+import authController from "../controller/authController.js"
 
 const router = Router()
 
+//Route Auth
+router.post('/login', authController.Login)
+
 //Route User
-router.get('/user', userController.GetUsers)
+router.get('/user',  authController.checkToken, userController.GetUsersView)
 router.get('/user/:id', userController.GetUsersById)
 router.post('/user', userController.CreateUser)
 router.post('/user-procedure', userController.CreateUserCustomer)
@@ -41,6 +45,7 @@ router.delete('/product/:id', productController.DeleteProduct)
 router.get('/orders', ordersController.GetOrders)
 router.get('/orders/:id', ordersController.GetOrdersById)
 router.post('/orders', ordersController.CreateOrders)
+router.post('/orders-procedure', ordersController.CreateOrderSP)
 router.put('/orders/:id', ordersController.UpdateOrders)
 router.delete('/orders/:id', ordersController.DeleteOrders)
 

@@ -10,9 +10,85 @@ const messageHelper = (result, status, message) => {
     };
 };
 
-const GetUsers = async (req, res)=>{
+// const GetUsers = async (req, res)=>{
+//     try {
+//         const users = await models.users.findAll();
+
+//         let succes = {
+//             message :'success',
+//             status  :'202', 
+//             result  : users, 
+//         }
+
+//         res.status(200).send(succes)
+//     } catch (error) {
+//         res.send(error.message)
+//     }
+// };
+
+// const GetUsersById = async (req, res)=>{
+//     try {
+//         const users = await models.users.findByPk(req.params.id);
+
+//         if(!users) throw new Error('Data user tidak ditemukan')
+
+//         let succes = {
+//             message :'success',
+//             status  :'202', 
+//             result  : users, 
+//         }
+
+//         res.status(200).send(succes)
+//     } catch (error) {
+//         res.send(error.message)
+//     }
+// };
+
+const GetUsersView = async (req, res) => {
+    // const users = await sequelize.query('SELECT * FROM selectView')
+    const users = await models.selectview.findAll()
+    let succes = {
+        message : 'success',
+        result  : users
+    }
+
+    res.status(202).send(succes)
+}
+
+const GetUsers = async (req, res) => {
     try {
-        const users = await models.users.findAll();
+        const users = await models.users.findAll({
+            attributes: ["id", "username"],
+            include:[
+                {
+                    model: models.customer, as: 'customers',
+                    attributes: ["firstname", "lastname"]
+                },
+                {
+                    model: models.orders, as: 'orders',
+                    attributes: ["totalproduct", "totalprice"],
+                    required: true, // tampilkan user yang memiliki order
+                    include:[
+                        {
+                            model: models.order_detail, as: 'order_details',
+                            attributes: ["quantity"],
+                            include: [
+                                {
+                                    model: models.product, as: 'product',
+                                    attributes: ["name", "description"],
+                                    include: [
+                                        {
+                                            model: models.product_category, as: 'category',
+                                            attributes: ["name", "description"]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        });
 
         let succes = {
             message :'success',
@@ -27,9 +103,42 @@ const GetUsers = async (req, res)=>{
 };
 
 const GetUsersById = async (req, res)=>{
-    try {
-        const users = await models.users.findByPk(req.params.id);
-
+    try {   
+        // const users = await models.users.findByPk(req.params.id);
+        const users = await models.users.findOne({
+            where:{id: req.params.id},
+            attributes: ["id", "username"],
+            include:[
+                {
+                    model: models.customer, as: 'customers',
+                    attributes: ["firstname", "lastname"]
+                },
+                {
+                    model: models.orders, as: 'orders',
+                    attributes: ["totalproduct", "totalprice"],
+                    required: true, // tampilkan user yang memiliki order
+                    include:[
+                        {
+                            model: models.order_detail, as: 'order_details',
+                            attributes: ["quantity"],
+                            include: [
+                                {
+                                    model: models.product, as: 'product',
+                                    attributes: ["name", "description"],
+                                    include: [
+                                        {
+                                            model: models.product_category, as: 'category',
+                                            attributes: ["name", "description"]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        });
+        
         if(!users) throw new Error('Data user tidak ditemukan')
 
         let succes = {
@@ -37,7 +146,7 @@ const GetUsersById = async (req, res)=>{
             status  :'202', 
             result  : users, 
         }
-
+        
         res.status(200).send(succes)
     } catch (error) {
         res.send(error.message)
@@ -48,6 +157,7 @@ const CreateUserCustomer = async (req, res) => {
     try {
         const salt = await bcrypt.genSalt(10);
         const passHash = await bcrypt.hash(req.body.password, salt);
+        
         
         req.body.password = passHash;
 
@@ -141,6 +251,7 @@ const DeleteUser = async(req,res) => {
 
 export default{
     GetUsers,
+    GetUsersView,
     GetUsersById,
     CreateUser,
     CreateUserCustomer,

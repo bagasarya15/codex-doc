@@ -1,4 +1,4 @@
-import models from "../models/init-models.js";
+import models, {sequelize} from "../models/init-models.js";
 
 const GetOrders = async (req, res) => {
     try {
@@ -42,6 +42,72 @@ const GetOrdersById = async (req, res) => {
         }
 
         res.status(202).send(succes)
+    } catch (error) {
+        res.send(error.message)
+    }
+}
+
+const CreateOrdersProcedure = async (req, res) => {
+    try {
+        const array = [];
+        const totalProduct = req.body.reduce((previous, current) => previous + current.quantity,0);
+
+        for (let i in req.body) {
+            const product = await models.product.findOne({
+                where: { id: req.body[i].product_id },
+                attributes: ["price"],
+            });s
+
+            array.push({
+                user_id: req.body[i].user_id,
+                totalprice: product.price * req.body[i].quantity,
+                product_id: req.body[i].product_id,
+                quantity: req.body[i].quantity,
+                totalproduct: totalProduct
+            });
+
+            const result = `[${JSON.stringify(array[i])}]`;
+            await sequelize.query(`CALL InsertOrders('${result}')`);
+        }
+
+        let success = {
+        message: "Insert procedure berhasil",
+        status: 202,
+        };
+
+        res.status(202).send(success);
+    } catch (error) {
+        res.send(error.message);
+    }
+}; 
+
+const CreateOrderSP = async (req, res) => {
+    try {
+        const order = req.body
+        let user_id = 0
+        let totalproduct = 0
+        let totalprice = 0
+
+        order.forEach(req => {
+            user_id = req.user_id
+            totalprice += req.quantity * req.price
+            totalproduct += req.quantity 
+        })
+
+        let object = { "user_id": user_id, "totalproduct": totalproduct, "totalprice": totalprice }
+        
+        const data  = `[${JSON.stringify(object)}]`
+        const data2 = `${JSON.stringify(order)}`
+
+        const query = `CALL InsertOrderxDetail ('${data}', '${data2}')`
+        const result = await sequelize.query(query)
+
+        let succes = {
+            message : 'Store procedure berhasil',
+            result  :  result
+        }
+
+        res.status(202).send(succes);
     } catch (error) {
         res.send(error.message)
     }
@@ -158,6 +224,8 @@ export default {
     GetOrders,
     GetOrdersById,
     CreateOrders,
+    CreateOrdersProcedure,
+    CreateOrderSP,
     UpdateOrders,
     DeleteOrders
 }

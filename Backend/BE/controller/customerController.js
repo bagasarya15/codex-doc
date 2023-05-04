@@ -3,7 +3,7 @@ import models from "../models/init-models.js";
 const GetCustomer = async (req, res)=> {
     try {
         const customer = await models.customer.findAll({
-            attributes:["firstname", "lastname", "createdat", "updateat"],
+            attributes:["id", "firstname", "lastname",  "user_id", "createdat", "updateat"],
             include: [{
                 model: models.users, as:'user',
                 attributes: ["username"],
@@ -26,7 +26,7 @@ const GetCustomerById = async (req, res) => {
     try {
         const customer = await models.customer.findOne({
             where:{id: req.params.id},
-            attributes:["firstname", "lastname", "createdat", "updateat"],
+            attributes:["id", "firstname", "lastname",  "user_id", "createdat", "updateat"],
             include: [{
                 model: models.users, as:'user',
                 attributes: ["username"],

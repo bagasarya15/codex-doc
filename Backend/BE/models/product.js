@@ -20,7 +20,7 @@ export default class product extends Model {
     },
     category_id: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: 'product_category',
         key: 'id'

@@ -22,15 +22,16 @@ import _order_detail from  "./order_detail.js";
 import _orders from  "./orders.js";
 import _product from  "./product.js";
 import _product_category from  "./product_category.js";
+import _selectview from  "./selectview.js";
 import _users from  "./users.js";
 
-
-export function initModels(sequelize) {
+function initModels(sequelize) {
   const customer = _customer.init(sequelize, DataTypes);
   const order_detail = _order_detail.init(sequelize, DataTypes);
   const orders = _orders.init(sequelize, DataTypes);
   const product = _product.init(sequelize, DataTypes);
   const product_category = _product_category.init(sequelize, DataTypes);
+  const selectview = _selectview.init(sequelize, DataTypes);
   const users = _users.init(sequelize, DataTypes);
 
   order_detail.belongsTo(orders, { as: "order", foreignKey: "order_id"});
@@ -50,6 +51,7 @@ export function initModels(sequelize) {
     orders,
     product,
     product_category,
+    selectview,
     users,
   };
 }
