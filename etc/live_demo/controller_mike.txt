@@ -1,0 +1,31 @@
+import models from "../models/init-models.js";
+
+const updateCategory = async (req, res) => {
+    try {
+        const category = await models.product_category.findByPk(req.params.id)
+        if(!category) throw new Error('Kategori produk tidak ditemukan')
+
+        await models.product_category.update({
+            name: req.body.name,
+            description: req.body.desc
+        },{
+            where: { id: category.id }
+        })
+        
+        let success = {
+            message : 'Kategori berhasi diperbarui',
+            result  : category
+        }
+
+        res.status(202).send(success)
+        // res.status(202).json({
+        //     message: 'Kategori'
+        // })
+    } catch (error) {
+        res.send(error.message)
+    }
+}
+
+export default {
+    updateCategory
+}
