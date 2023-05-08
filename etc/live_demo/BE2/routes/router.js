@@ -3,10 +3,11 @@ import userController from "../controller/userController.js";
 import productController from "../controller/productController.js";
 import authController from "../controller/authController.js";
 import orderController from "../controller/orderController.js";
+import categoryController from "../controller/categoryController.js";
 
 const router = Router()
 
-router.get('/', (req, res)=> {
+router.get('/', (req, res) => {
     res.send('Halaman Root')
 })
 
@@ -24,6 +25,8 @@ router.get('/product', productController.GetProduct)
 router.post('/product', productController.CreateProduct)
 router.put('/product/:id', productController.UpdateProduct)
 router.delete('/product/:id', productController.DeleteProduct)
+
+router.delete('/category/:id', categoryController.DeleteCategoryProduct)
 
 //Router Orders
 router.get('/orders', orderController.GetOrders)

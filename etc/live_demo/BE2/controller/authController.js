@@ -12,7 +12,6 @@ const Login = async(req, res) => {
 
         if(!users) throw new Error("Username tidak ditemukan")
 
-
         const matchPassword = await bcrypt.compare(req.body.password, users.password)
 
         if(!matchPassword) throw new Error("Password salah")

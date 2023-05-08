@@ -2,19 +2,23 @@ import models, { sequelize } from "../models/init-models.js"
 import bcrypt from "bcrypt"
 
 const GetAllUser = async(req, res) => {
-    // const users = await models.users.findAll()
-    // const users = await sequelize.query('SELECT * FROM selectUserCustomer')
-    const users = await models.users.findAll({
-        include:[{
-            model: models.customer, as : 'customers',
-            attributes:["firstname", "lastname"]
-        }]
-    })
+    try {
+        // const users = await models.users.findAll()
+        // const users = await sequelize.query('SELECT * FROM selectUserCustomer')
+        const users = await models.users.findAll({
+            include:[{
+                model: models.customer, as : 'customers',
+                attributes:["firstname", "lastname"]
+            }]
+        })
 
-    res.status(202).json({
-        message: 'success',
-        result : users
-    })
+        res.status(202).json({
+            message: 'success',
+            result : users
+        })
+    } catch (error) {
+        res.send(error.message)
+    }
 }
 
 
