@@ -1,5 +1,5 @@
-npm install express
 npm init -y
+npm install express
 tambahkan "type": "module", di package.json
 
 tambah juga di scripts {
@@ -64,6 +64,8 @@ lalu hapus export default
 
 npm install nodemon
 npm install bcrypt
+npm install pg
 npm install sequelize	
 npm install sequelize-auto
-npm install pg
+
+import models from "../models/init-models.js"; //untuk import models dicontroller

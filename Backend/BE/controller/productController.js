@@ -17,8 +17,10 @@ const storage = multer.diskStorage({
         cb(null, './image')
     },
     filename: function (req, file, cb) {
-        const renameFile = Date.now()
-        cb(null, 'image' + '-' + renameFile + '.' + file.originalname.split('.').pop())
+        // const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+        // cb(null, file.fieldname + '-' + uniqueSuffix)
+        const date = Date.now()
+        cb(null, date + '-' + file.originalname)
     }
 })
 
