@@ -4,6 +4,8 @@ select * from order_detail
 TRUNCATE TABLE orders RESTART IDENTITY CASCADE;
 TRUNCATE TABLE order_detail RESTART IDENTITY CASCADE;
 
+[{}]
+
 CREATE OR REPLACE PROCEDURE InsertOrderxDetail (In data1 json, In data2 json)
 language plpgsql
 as

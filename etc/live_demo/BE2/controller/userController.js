@@ -21,7 +21,6 @@ const GetAllUser = async(req, res) => {
     }
 }
 
-
 const InsertProcedure = async (req, res) => {
     try {
         const salt = await bcrypt.genSalt(10)

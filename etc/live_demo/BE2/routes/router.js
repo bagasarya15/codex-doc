@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
 router.post('/login', authController.Login)
 
 //Router Users
-router.get('/users', userController.GetAllUser)
+router.get('/users', authController.checkToken, userController.GetAllUser)
 router.post('/users-procedure', userController.InsertProcedure)
 router.put('/users-procedure/:id', userController.UpdateProcedure)
 router.delete('/users/:id', userController.DeleteUserCustomer)

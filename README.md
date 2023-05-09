@@ -1,2 +1,2 @@
 # Code-x-Academy
-Belajar PostgreSQL
+Pengen Jadi Programer

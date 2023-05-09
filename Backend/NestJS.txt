@@ -1,0 +1,40 @@
+@ decoractor yang disebut method
+@Controller('user') > path utamanya adalah user
+@Get() > untuk menggunakan detactor dari user untuk buat controller
+
+example ('/user') to ('/user/foo')
+
+Provider
+terhubung langsung kedatabase
+mengembalikan hasil proses request yang diterima controller
+@Injectable() > daoat di inject di controller
+$nest g service cats     ( g = generate )
+
+Modules
+mendaftar semua controller dan provider yang digunakan
+$nest g module cats
+module lain dapat di import dalam sebuah module
+nest g resource product => generate semua otomatis
+
+
+step install nestjs :
+
+npm i -g @nestjs/cli
+nest new project-name
+select-> npm (enter)
+
+tambah jika tidak mau ada .ts nya di nest-cli.json
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "deleteOutDir": true
+  },
+  "generateOptions": {
+    "spec": false
+  }
+}
+
+
+

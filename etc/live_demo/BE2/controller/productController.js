@@ -1,4 +1,4 @@
-import models from "../models/init-models.js";
+import models, { sequelize } from "../models/init-models.js";
 import multer from "multer";
 import fs from "fs";
 
@@ -26,6 +26,8 @@ const upload = multer({
 
 const GetProduct = async (req, res)=> {
     try {
+
+        const query = await sequelize.query ('UPDATE name = ?')
         const product = await models.product.findAll({
             attributes:["id","name", "description", "price", "image"],
             include: [{
