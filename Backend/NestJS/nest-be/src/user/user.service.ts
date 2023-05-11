@@ -20,6 +20,17 @@ export class UserService {
         }
     }
 
+    async GetUsersById( id:number) {
+        try {
+            const dataUser = await users.findOne({
+                where:{id:id}
+            })
+
+            return ['Success', dataUser]
+        } catch (error) {
+            return error.message
+        }
+    }
     async CreateUsers( dataBody:any ): Promise<any> {
         let dataUser:any = '';
         let dataCustomer:any = '';
@@ -66,6 +77,22 @@ export class UserService {
             const result = await this.sequelize.query(query);
 
             return result
+        } catch (error) {
+            return error.message
+        }
+    }
+
+    async DeleteUserCustomer ( id:number ){
+        try {
+            await customer.destroy({
+                where:{user_id:id}
+            })
+
+            await users.destroy({
+                where:{id:id}
+            })
+            
+            return 'Hapus data user & customer berhasil'
         } catch (error) {
             return error.message
         }

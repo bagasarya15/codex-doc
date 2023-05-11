@@ -6,7 +6,11 @@ import {
   Index,
   Sequelize,
   ForeignKey,
+  BelongsTo,
+  HasMany,
 } from 'sequelize-typescript';
+import { product_category } from './product_category';
+import { order_detail } from './order_detail';
 
 export interface productAttributes {
   id?: number;
@@ -38,6 +42,7 @@ export class product
   @Column({ allowNull: true, type: DataType.STRING(200) })
   description?: string;
 
+  @ForeignKey(() => product_category)
   @Column({ allowNull: true, type: DataType.INTEGER })
   category_id?: number;
 
@@ -60,4 +65,10 @@ export class product
     defaultValue: Sequelize.literal('now()'),
   })
   updateat?: Date;
+
+  @BelongsTo(() => product_category)
+  product_category?: product_category;
+
+  @HasMany(() => order_detail, { sourceKey: 'id' })
+  order_details?: order_detail[];
 }

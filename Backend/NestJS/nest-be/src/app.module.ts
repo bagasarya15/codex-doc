@@ -1,11 +1,17 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { LoggerMiddleware } from './logger.middleware';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
-import { CustomerModule } from './customer/customer.module';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { customer } from 'models';
 import { ProductCategoryModule } from './product_category/product_category.module';
+import { ProdCatDtoModule } from './prod-cat-dto/prod-cat-dto.module';
+import { UsersModule } from './users/users.module';
+import { CustomerModule } from './customer/customer.module';
+import { ProductModule } from './product/product.module';
+import { OrdersModule } from './orders/orders.module';
+import { OrderDetailModule } from './order-detail/order-detail.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [SequelizeModule.forRootAsync({
@@ -20,11 +26,26 @@ import { ProductCategoryModule } from './product_category/product_category.modul
         autoLoadModels: true,
       }),
     }),
-    UserModule, 
-    CustomerModule, 
-    ProductCategoryModule,
+    UserModule,
+    ProductCategoryModule, 
+    ProdCatDtoModule,
+    UsersModule,
+    CustomerModule,
+    ProductModule,
+    OrdersModule,
+    OrderDetailModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+// export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('users')
+
+    
+    // .exclude('auth/ (.*)')
+    // .forRoutes('*')
+  }
+}

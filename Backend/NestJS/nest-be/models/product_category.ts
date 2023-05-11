@@ -6,7 +6,9 @@ import {
   Index,
   Sequelize,
   ForeignKey,
+  HasMany,
 } from 'sequelize-typescript';
+import { product } from './product';
 
 export interface product_categoryAttributes {
   id?: number;
@@ -50,4 +52,7 @@ export class product_category
     defaultValue: Sequelize.literal('now()'),
   })
   updateat?: Date;
+
+  @HasMany(() => product, { sourceKey: 'id' })
+  products?: product[];
 }

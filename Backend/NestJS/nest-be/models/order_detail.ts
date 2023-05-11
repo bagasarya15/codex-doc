@@ -6,7 +6,10 @@ import {
   Index,
   Sequelize,
   ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript';
+import { orders } from './orders';
+import { product } from './product';
 
 export interface order_detailAttributes {
   id?: number;
@@ -30,9 +33,11 @@ export class order_detail
   @Index({ name: 'order_detail_pkey', using: 'btree', unique: true })
   id?: number;
 
+  @ForeignKey(() => orders)
   @Column({ allowNull: true, type: DataType.INTEGER })
   order_id?: number;
 
+  @ForeignKey(() => product)
   @Column({ allowNull: true, type: DataType.INTEGER })
   product_id?: number;
 
@@ -52,4 +57,10 @@ export class order_detail
     defaultValue: Sequelize.literal('now()'),
   })
   updateat?: Date;
+
+  @BelongsTo(() => orders)
+  order?: orders;
+
+  @BelongsTo(() => product)
+  product?: product;
 }

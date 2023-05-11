@@ -10,7 +10,12 @@ export class ProductCategoryService {
         try {
             const category = await product_category.findAll()
 
-            return ['Success', category]
+            let success = {
+                message : 'success',
+                result  : category
+            }
+
+            return success
         } catch (error) {
             return error.message
         }
@@ -23,9 +28,9 @@ export class ProductCategoryService {
             })
             
             let success = {
-                message: 'Success',
-                status: '202',
-                result: category
+                message : 'Success',
+                status  : '202',
+                result  : category
             }
 
             return success
@@ -41,8 +46,12 @@ export class ProductCategoryService {
                 description: dataBody.description
             });
 
-            return ['Kategori berhasil ditambah' ,category]
+            let success = {
+                message : 'Kategori berhasil ditambah',
+                result  : category
+            }
 
+            return success
         } catch (error) {
             return error.message;
         }

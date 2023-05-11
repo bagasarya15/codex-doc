@@ -6,7 +6,11 @@ import {
   Index,
   Sequelize,
   ForeignKey,
+  BelongsTo,
+  HasMany,
 } from 'sequelize-typescript';
+import { customer } from './customer';
+import { orders } from './orders';
 
 export interface usersAttributes {
   id?: number;
@@ -21,6 +25,7 @@ export class users
   extends Model<usersAttributes, usersAttributes>
   implements usersAttributes
 {
+  @ForeignKey(() => customer)
   @Column({
     primaryKey: true,
     type: DataType.INTEGER,
@@ -48,4 +53,10 @@ export class users
     defaultValue: Sequelize.literal('now()'),
   })
   updateat?: Date;
+
+  @BelongsTo(() => customer)
+  customer?: customer;
+
+  @HasMany(() => orders, { sourceKey: 'id' })
+  orders?: orders[];
 }
