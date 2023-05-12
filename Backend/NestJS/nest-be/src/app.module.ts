@@ -1,5 +1,10 @@
-import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
-import { LoggerMiddleware } from './logger.middleware';
+import {
+  Module,
+  NestModule,
+  MiddlewareConsumer,
+  RequestMethod,
+} from '@nestjs/common';
+import { LoggerMiddleware } from './midleware/logger.middleware';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
@@ -12,9 +17,11 @@ import { ProductModule } from './product/product.module';
 import { OrdersModule } from './orders/orders.module';
 import { OrderDetailModule } from './order-detail/order-detail.module';
 import { AuthModule } from './auth/auth.module';
+import { RolesModule } from './roles/roles.module';
 
 @Module({
-  imports: [SequelizeModule.forRootAsync({
+  imports: [
+    SequelizeModule.forRootAsync({
       useFactory: () => ({
         dialect: 'postgres',
         host: process.env.HOST,
@@ -22,12 +29,12 @@ import { AuthModule } from './auth/auth.module';
         username: process.env.DB_USER,
         password: process.env.DB_PASS,
         database: process.env.DB_NAME,
-        models: [], 
+        models: [],
         autoLoadModels: true,
       }),
     }),
     UserModule,
-    ProductCategoryModule, 
+    ProductCategoryModule,
     ProdCatDtoModule,
     UsersModule,
     CustomerModule,
@@ -35,17 +42,20 @@ import { AuthModule } from './auth/auth.module';
     OrdersModule,
     OrderDetailModule,
     AuthModule,
+    RolesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-// export class AppModule {}
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('users')
+export class AppModule {}
 
-    
-    // .exclude('auth/ (.*)')
-    // .forRoutes('*')
-  }
-}
+//Kalau Mau Pakai Midleware Aktifkan Code Dibawah
+
+// export class AppModule implements NestModule {
+//   configure(consumer: MiddlewareConsumer) {
+//     consumer.apply(LoggerMiddleware).forRoutes('users')
+
+//     // .exclude({path: 'auth/login', method: RequestMethod.POST})
+//     // .forRoutes('*')
+//   }
+// }

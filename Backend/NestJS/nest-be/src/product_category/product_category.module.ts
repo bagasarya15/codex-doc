@@ -5,9 +5,8 @@ import { ProductCategoryService } from './product_category.service';
 import { SequelizeModule } from '@nestjs/sequelize';
 
 @Module({
-  imports:[SequelizeModule.forFeature([product_category])],
+  imports: [SequelizeModule.forFeature([product_category])],
   providers: [ProductCategoryService],
-  controllers: [ProductCategoryController]
+  controllers: [ProductCategoryController],
 })
-
 export class ProductCategoryModule {}

@@ -8,6 +8,6 @@ import { AuthService } from 'src/auth/auth.service';
 @Module({
   imports: [SequelizeModule.forFeature([users, customer])],
   controllers: [UsersController],
-  providers: [UsersService, AuthService]
+  providers: [UsersService, AuthService],
 })
 export class UsersModule {}

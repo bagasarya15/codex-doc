@@ -11,54 +11,57 @@ export class CustomerService {
 
   async findAll() {
     try {
-      const dataCustomer = await customer.findAll()
+      const dataCustomer = await customer.findAll();
 
       let succes = {
-        message : 'success',
-        result  : dataCustomer
-      }
-      
-      return succes
+        message: 'success',
+        result: dataCustomer,
+      };
+
+      return succes;
     } catch (error) {
-      return error.message
+      return error.message;
     }
   }
 
   async findOne(id: number) {
     try {
-        const dataCustomer = await customer.findOne({
-          where:{id:id},
-        })
+      const dataCustomer = await customer.findOne({
+        where: { id: id },
+      });
 
-        let succes = {
-          message : 'success',
-          result  : dataCustomer
-        }
+      let succes = {
+        message: 'success',
+        result: dataCustomer,
+      };
 
-        return succes
+      return succes;
     } catch (error) {
-      return error.message
+      return error.message;
     }
   }
 
   async update(id: number, updateCustomerDto: UpdateCustomerDto) {
     try {
-      const updateCustomer = await customer.update({
-        firstname: updateCustomerDto.firstname,
-        lastname: updateCustomerDto.lastname
-      },{
-        where:{id:id},
-        returning: true
-      })
+      const updateCustomer = await customer.update(
+        {
+          firstname: updateCustomerDto.firstname,
+          lastname: updateCustomerDto.lastname,
+        },
+        {
+          where: { id: id },
+          returning: true,
+        },
+      );
 
       let succes = {
-        message : 'Customer berhasil diperbarui',
-        result  : updateCustomer
-      }
+        message: 'Customer berhasil diperbarui',
+        result: updateCustomer,
+      };
 
-      return succes
+      return succes;
     } catch (error) {
-      return error.message
+      return error.message;
     }
   }
 

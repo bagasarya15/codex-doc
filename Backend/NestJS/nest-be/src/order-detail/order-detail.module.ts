@@ -7,7 +7,6 @@ import { order_detail } from 'models';
 @Module({
   imports: [SequelizeModule.forFeature([order_detail])],
   controllers: [OrderDetailController],
-  providers: [OrderDetailService]
+  providers: [OrderDetailService],
 })
-
 export class OrderDetailModule {}

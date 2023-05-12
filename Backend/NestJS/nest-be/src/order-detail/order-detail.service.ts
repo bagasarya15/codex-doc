@@ -11,35 +11,35 @@ export class OrderDetailService {
 
   async findAll() {
     try {
-      const orderDetail = await order_detail.findAll()
+      const orderDetail = await order_detail.findAll();
 
       let succes = {
-        message : 'success',
-        result  : orderDetail 
-      }
+        message: 'success',
+        result: orderDetail,
+      };
 
-      return succes
+      return succes;
     } catch (error) {
-        return error.message
+      return error.message;
     }
   }
 
   async findOne(id: number) {
     try {
       const orderDetail = await order_detail.findOne({
-        where:{
-          id:id
-        }
-      })
+        where: {
+          id: id,
+        },
+      });
 
       let succes = {
-        message : 'success',
-        result  : orderDetail
-      }
+        message: 'success',
+        result: orderDetail,
+      };
 
-      return succes
+      return succes;
     } catch (error) {
-        return error.message
+      return error.message;
     }
   }
 

@@ -7,6 +7,6 @@ import { product_category } from 'models';
 @Module({
   imports: [SequelizeModule.forFeature([product_category])],
   controllers: [ProdCatDtoController],
-  providers: [ProdCatDtoService]
+  providers: [ProdCatDtoService],
 })
 export class ProdCatDtoModule {}

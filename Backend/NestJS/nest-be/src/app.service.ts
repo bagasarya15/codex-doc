@@ -7,6 +7,6 @@ export class AppService {
   }
 
   getHello2(): string {
-    return 'Hello World 2!'
+    return 'Hello World 2!';
   }
 }

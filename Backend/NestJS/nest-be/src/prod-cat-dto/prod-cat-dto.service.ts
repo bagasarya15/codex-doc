@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateProdCatDtoDto } from './dto/create-prod-cat-dto.dto';
 import { UpdateProdCatDtoDto } from './dto/update-prod-cat-dto.dto';
-import { product_category} from 'models';
+import { product_category } from 'models';
 
 @Injectable()
 export class ProdCatDtoService {
@@ -9,86 +9,89 @@ export class ProdCatDtoService {
     try {
       const category = await product_category.create({
         name: createProdCatDtoDto.name,
-        description: createProdCatDtoDto.description
+        description: createProdCatDtoDto.description,
       });
 
       let success = {
         message: 'Kategori berhasil ditambah',
-        result: category
-      }
+        result: category,
+      };
 
-      return success
+      return success;
     } catch (error) {
-      return error.message
+      return error.message;
     }
   }
 
   async findAll() {
     try {
-      const category = await product_category.findAll()
+      const category = await product_category.findAll();
 
       let success = {
         message: 'success',
-        result: category
-      }
+        result: category,
+      };
 
-      return success
+      return success;
     } catch (error) {
-      return error.message
+      return error.message;
     }
   }
 
   async findOne(id: number) {
     try {
       const category = await product_category.findOne({
-        where:{id:id}
-      })
+        where: { id: id },
+      });
 
       let success = {
-        message : 'success',
-        result  : category
-      }
+        message: 'success',
+        result: category,
+      };
 
-      return success
+      return success;
     } catch (error) {
-      return error.message
+      return error.message;
     }
   }
 
   async update(id: number, updateProdCatDtoDto: UpdateProdCatDtoDto) {
     try {
-      const category = await product_category.update({
+      const category = await product_category.update(
+        {
           name: updateProdCatDtoDto.name,
-          description: updateProdCatDtoDto.description
-      },{
-          where:{id: id},
-          returning:true
-      });
+          description: updateProdCatDtoDto.description,
+        },
+        {
+          where: { id: id },
+          returning: true,
+        },
+      );
 
       let success = {
         message: 'Kategori id ' + id + ' berhasil diperbarui',
-        result: category
-      }
+        result: category,
+      };
 
-      return success
-  } catch (error) {
-      return error.message
-  }
+      return success;
+    } catch (error) {
+      return error.message;
+    }
   }
 
   async remove(id: number) {
     try {
       await product_category.destroy({
-          where:{id:id}
-      })
-      
+        where: { id: id },
+      });
+
       let success = {
         message: 'Kategori id ' + id + ' berhasil dihapus',
-      }
+      };
 
-      return success
+      return success;
     } catch (error) {
-        return error.message
+      return error.message;
     }
   }
 }
