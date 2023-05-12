@@ -30,6 +30,7 @@ export class product
 {
   @Column({
     primaryKey: true,
+    autoIncrement: true,
     type: DataType.INTEGER,
     defaultValue: Sequelize.literal("nextval('product_id_seq'::regclass)"),
   })

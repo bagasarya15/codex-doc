@@ -10,14 +10,16 @@ import {
   HasMany,
 } from 'sequelize-typescript';
 import { customer } from './customer';
+import { roles } from './roles';
 import { orders } from './orders';
 
 export interface usersAttributes {
   id?: number;
   username?: string;
   password?: string;
+  role_id?: number;
   createdat?: Date;
-  updateat?: Date;
+  updatedat?: Date;
 }
 
 @Table({ tableName: 'users', schema: 'public', timestamps: false })
@@ -34,11 +36,15 @@ export class users
   @Index({ name: 'users_pkey', using: 'btree', unique: true })
   id?: number;
 
-  @Column({ allowNull: true, type: DataType.STRING(100) })
+  @Column({ allowNull: true, type: DataType.STRING(255) })
   username?: string;
 
   @Column({ allowNull: true, type: DataType.STRING })
   password?: string;
+
+  @ForeignKey(() => roles)
+  @Column({ allowNull: true, type: DataType.INTEGER })
+  role_id?: number;
 
   @Column({
     allowNull: true,
@@ -52,10 +58,13 @@ export class users
     type: DataType.DATE(6),
     defaultValue: Sequelize.literal('now()'),
   })
-  updateat?: Date;
+  updatedat?: Date;
 
   @BelongsTo(() => customer)
   customer?: customer;
+
+  @BelongsTo(() => roles)
+  role?: roles;
 
   @HasMany(() => orders, { sourceKey: 'id' })
   orders?: orders[];

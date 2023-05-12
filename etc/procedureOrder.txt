@@ -30,3 +30,34 @@ select new_order_id, x.product_id, x.quantity from json_to_recordset(data2) x
 
 END
 $$
+
+
+/////////////////////////Update/////////////////////////////////
+
+CREATE OR REPLACE PROCEDURE updateorder(
+	IN data json,
+	IN data2 json)
+LANGUAGE 'plpgsql'
+AS $$
+declare
+    rows record;
+	r record;
+	dt record;
+begin
+   begin 
+      select * from json_to_recordset(data2) as y(id int, totalproduct int,totalprice int) into dt;
+      update orders set totalproduct=dt.totalproduct, totalprice=dt.totalprice where id=dt.id returning id
+	  into rows;     
+    FOR r IN select * from json_to_recordset(data) as x(id int, quantity int)
+    LOOP
+      update order_detail set quantity=r.quantity where id=r.id;	  
+	  if not found or rows is null then 
+	     rollback;
+	       raise 'Id tidak ditemukan';
+	  else
+         commit;
+	  end if;
+	 END LOOP;
+	end;
+end;
+$$;
