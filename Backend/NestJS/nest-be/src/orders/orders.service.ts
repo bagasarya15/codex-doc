@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
 import { Sequelize } from 'sequelize-typescript';
-import { orders, users } from 'models';
+import { order_detail, orders, users } from 'models';
 
 @Injectable()
 export class OrdersService {
@@ -90,8 +89,45 @@ export class OrdersService {
     }
   }
 
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
+  async update(id: number, updateOrder:any) {
+    try {
+      const findOrder = await orders.findByPk(id);
+      if (!findOrder) {
+        throw new Error(`Orders id ${id} tidak ditemukan!`);
+      }
+    
+      const findOrderDetail = await order_detail.findAll({
+        where: {
+          order_id: findOrder.id,
+        },
+      });
+    
+      if (!findOrderDetail) {
+        throw new Error("Order Detail Kosong!");
+      }
+    
+      // let hasil_orderDetail = updateOrder.order_detail;
+
+      //  //FOR INI DIPAKE KALO PAKE PROCEDURE YANG updateOrder
+      // for (let i = 0; i < findOrderDetail.length; i++) {
+      //   hasil_orderDetail[i].id = findOrderDetail[i].id;`
+      // }
+
+      const result = await this.sequelize.query(
+        "CALL orderUpdateNew(:order_id, :order_detail)",
+        {
+          replacements: {
+            order_id: findOrder.id,
+            order_detail: JSON.stringify(updateOrder)
+          }
+        }
+      );
+      
+      return result
+
+    } catch (error) {
+      return error.message
+    }
   }
 
   remove(id: number) {
