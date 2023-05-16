@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
-// import './App.css';
+import '../../App.css';
 
 function ListProduct() {
     const ProdutList = [
-        {id:1, nama: "laptop", harga: 2000, jumlah: 9, likes: 0},
-        {id:2, nama: "mouse", harga: 500, jumlah: 20, likes: 0},
-        {id:3, nama: "lemari", harga: 1000, jumlah: 5, likes: 0},
-        {id:4, nama: "sepeda", harga: 5000, jumlah: 3, likes: 0},
-        {id:5, nama: "kemeja", harga: 850, jumlah: 12, likes: 0},
+        {id:1, nama: "Laptop", harga: 2000, jumlah: 9, likes: 0},
+        {id:2, nama: "Mouse", harga: 500, jumlah: 20, likes: 0},
+        {id:3, nama: "Lemari", harga: 1000, jumlah: 5, likes: 0},
+        {id:4, nama: "Sepeda", harga: 5000, jumlah: 3, likes: 0},
+        {id:5, nama: "Kemeja", harga: 850, jumlah: 12, likes: 0},
         
     ]
 
@@ -51,9 +51,9 @@ function ListProduct() {
 
     let i = 1
     return (
-        <div>
-            <h3>Daftar Produk</h3>
-            <table>
+        <div className='body-product'>
+            <h3>DAFTAR PRODUK</h3>
+            <table className='table-product'>
                 <tr>
                     <th>No</th>
                     <th>Nama Produk</th>
@@ -72,8 +72,8 @@ function ListProduct() {
                         <td>{produk.likes}</td>
                         <td>
                             <button onClick={()=>kurang(produk.id)}>-</button>
-                            <button onClick={()=>tambah(produk.id)}>+</button>
-                            <button className="like-class" onClick={()=>like(produk.id)}>👍</button>
+                            <button className='list-plus' onClick={()=>tambah(produk.id)}>+</button>
+                            <button className="like-class" onClick={()=>like(produk.id)}>Like</button>
                         </td>
                         
                         

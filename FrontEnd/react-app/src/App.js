@@ -10,8 +10,7 @@ import ParentFunct from './components/pages/parent';
 
 function App() {
   return (
-    <div className="App">
-      <header className='App-header'>
+    <div>
       <Router>
         <Routes>
           <Route path='/' element={<Layout/>}>
@@ -24,7 +23,6 @@ function App() {
           </Route>
         </Routes>
       </Router>
-      </header>
     </div>
   );
 }
