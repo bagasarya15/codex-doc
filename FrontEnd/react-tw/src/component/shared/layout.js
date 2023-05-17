@@ -1,8 +1,8 @@
-import { useState, useEffect, Fragment } from "react";
-import SideBar from "./sidebar";
-import TopBar from "./topbar";
-import { Outlet } from "react-router-dom";
-import { Transition } from "@headlessui/react";
+import { useState, useEffect, Fragment } from 'react';
+import SideBar from './sidebar';
+import TopBar from './topbar';
+import { Outlet } from 'react-router-dom';
+import { Transition } from '@headlessui/react';
 
 export default function Layout({ children }) {
   const [showNav, setShowNav] = useState(true);
@@ -20,11 +20,11 @@ export default function Layout({ children }) {
 
   useEffect(() => {
     if (typeof window != undefined) {
-      window.addEventListener("resize", handleResize);
+      window.addEventListener('resize', handleResize);
     }
 
     return () => {
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
@@ -45,10 +45,10 @@ export default function Layout({ children }) {
       </Transition>
       <main
         className={`pt-16 transition-all duration-[400ms] ${
-          showNav && !isMobile ? "pl-56" : ""
+          showNav && !isMobile ? 'pl-56' : ''
         }`}
       >
-        <div className="px-4 md:px-16">{<Outlet/>}</div>
+        <div className="px-4 md:px-16">{<Outlet />}</div>
       </main>
     </>
   );

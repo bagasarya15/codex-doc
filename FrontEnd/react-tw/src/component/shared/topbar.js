@@ -1,20 +1,20 @@
-import React,{useState} from 'react'
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-    Bars3CenterLeftIcon,
-    PencilIcon,
-    ChevronDownIcon,
-    CreditCardIcon,
-    Cog8ToothIcon,
-  } from "@heroicons/react/24/solid";
-  import { BellIcon, CheckIcon } from "@heroicons/react/24/outline";
-  import { Menu, Transition, Popover } from "@headlessui/react";
+  Bars3CenterLeftIcon,
+  PencilIcon,
+  ChevronDownIcon,
+  CreditCardIcon,
+  Cog8ToothIcon,
+} from '@heroicons/react/24/solid';
+import { BellIcon, CheckIcon } from '@heroicons/react/24/outline';
+import { Menu, Transition, Popover } from '@headlessui/react';
 
 const TopBar = ({ showNav, setShowNav }) => {
   return (
     <div
       className={`bg-white fixed w-full h-16 flex justify-between items-center transition-all duration-[400ms] ${
-        showNav ? "pl-56" : ""
+        showNav ? 'pl-56' : ''
       }`}
     >
       <div className="pl-4 md:pl-16">
@@ -163,7 +163,7 @@ const TopBar = ({ showNav, setShowNav }) => {
         </Menu>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default TopBar
+export default TopBar;
