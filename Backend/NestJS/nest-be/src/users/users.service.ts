@@ -43,6 +43,7 @@ export class UsersService {
   async findAll() {
     try {
       const dataUser = await users.findAll({
+        order:[ ['id', 'DESC'] ]  ,
         include: [
           {
             model: roles
@@ -52,6 +53,7 @@ export class UsersService {
           },
           {
             model: orders,
+            // required:true,
             include: [
               {
                 model: order_detail,
@@ -132,6 +134,41 @@ export class UsersService {
     }
   }
 
+  // async update(id: number, updateUserDto: UpdateUserDto) {
+  //   try {
+  //     const dataUser = await users.findByPk(id);
+  //     if (!dataUser) throw new Error('User tidak ditemukan!');
+
+  //     let password: any = dataUser.password;
+  //     let salt: any = await bcrypt.genSalt(10);
+  //     let passHash = await bcrypt.hash(updateUserDto.password, salt);
+
+  //     if (updateUserDto.password) {
+  //       password = passHash;
+  //     }
+
+  //     const updateUsers = await users.update(
+  //       {
+  //         username: updateUserDto.username,
+  //         password: password,
+  //       },
+  //       {
+  //         where: { id: id },
+  //         returning: true,
+  //       },
+  //     );
+
+  //     let success = {
+  //       message: 'success',
+  //       result: updateUsers,
+  //     };
+
+  //     return success;
+  //   } catch (error) {
+  //     return error.message;
+  //   }
+  // }
+  
   async update(id: number, updateUserDto: UpdateUserDto) {
     try {
       const dataUser = await users.findByPk(id);
@@ -145,7 +182,17 @@ export class UsersService {
         password = passHash;
       }
 
-      const updateUsers = await users.update(
+      let updateCustomer = await customer.update({
+        firstname: updateUserDto.firstname,
+        lastname: updateUserDto.lastname
+        },
+        {
+          where: { user_id: id },
+          returning: true,
+        },
+      );
+
+      let updateUsers = await users.update(
         {
           username: updateUserDto.username,
           password: password,
@@ -158,7 +205,7 @@ export class UsersService {
 
       let success = {
         message: 'success',
-        result: updateUsers,
+        result: [updateCustomer, updateUsers],
       };
 
       return success;
