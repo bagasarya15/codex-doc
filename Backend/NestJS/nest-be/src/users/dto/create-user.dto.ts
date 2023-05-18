@@ -12,4 +12,7 @@ export class CreateUserDto {
 
   @IsNotEmpty({ message: 'Password tidak boleh kosong' })
   lastname: string;
+
+  @IsNotEmpty({ message: 'Role tidak boleh kosong' })
+  role_id: any;
 }
