@@ -22,10 +22,16 @@ const deleteUser = async (id) => {
   return axios.delete(`/users/${id.id}`, id)
 }
 
+const GetRoles = () => {
+  return axios.get('/roles');
+}
+
+
 export default {
   findAll,
   create,
   GetById,
   update,
-  deleteUser 
+  deleteUser,
+  GetRoles 
 };

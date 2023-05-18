@@ -3,6 +3,7 @@ import { Fragment } from 'react';
 import { Transition, Dialog } from '@headlessui/react';
 import apimethod from '../api/apiMethod';
 import { useForm } from 'react-hook-form';
+import Alert from './alert';
 
 const EditUser = (props) => {
     const {
@@ -13,23 +14,37 @@ const EditUser = (props) => {
     
     const handleRegistration = async (data) => {
         const result = await apimethod.update(data);
-        alert('Data user customer berhasil diperbarui');
+        console.log(data);
+        const status = result.data.status;
+        const message = result.data.message;
+    
+        console.log(data)
+        if(status){
+          if(status == 200){
+            Alert.AlertSucces(message)
+          }else{
+            Alert.AlertError(message)
+          }
+        }
         props.closeModal();
     };
+
     
     const registerOptions = {
     username: { required: 'username is required' },
-    password: {
-        required: 'password is required',
-        minLength: {
-        value: 8,
-        message: 'password must have at least 8 characters',
-        },
-    },
+    // password: {
+    //     required: 'password is required',
+    //     minLength: {
+    //     value: 5,
+    //     message: 'password must have at least 8 characters',
+    //     },
+    // },
     firstname: { required: 'first name is required' },
     lastname: { required: 'last name is required' },
-    id: {required: 'id required'},
-    };
+    role_id: { required: 'role required' },
+    id: { required: 'id required' },
+  };
+
   return (
     <div>
         <Transition appear show={props.show} as={Fragment}>
@@ -64,9 +79,12 @@ const EditUser = (props) => {
                   >
                     Edit Users
                   </Dialog.Title>
-                  <div className="mt-2">
+
+                  <div class="border-t-1 border border-black-900 mt-3"></div>
+
+                  <div className="">
                     <form onSubmit={handleSubmit(handleRegistration)}>
-                      <div className="max-w-xl bg-white py-6 px-3 m-auto w-full mt-6">
+                      <div className="max-w-xl bg-white py-6 px-3 m-auto w-full">
                         <div className="grid grid-cols-1 gap-4 max-w-xl m-auto">
                           <div className="col-span-1">
                             <input type='hidden' 
@@ -97,7 +115,7 @@ const EditUser = (props) => {
                               placeholder="Password"
                               {...register(
                                 'password',
-                                registerOptions.password,
+                                // registerOptions.password,
                               )}
                               className="border w-full rounded-lg text-gray-800 py-2 px-2"
                             />
@@ -139,7 +157,23 @@ const EditUser = (props) => {
                               {errors?.lastname && errors.lastname.message}
                             </span>
                           </div>
+
+                          <div className='col-span-1'>                            
+                            <select class="bg-gray-50 border border-gray-300 w-full py-2 px-2 text-gray-800 rounded-lg" name='role_id' {...register( 'role_id', registerOptions.role_id,)}>
+                              <option value=''>Choose a role</option>
+                              {props.userRole.map((ur) => (
+                                <option key={ur.id} value={ur.id}>
+                                  {ur.name}
+                                </option>
+                              ))}
+                            </select>
+                            <span className="text-sm text-rose-600">
+                              {errors?.role_id && errors.role_id.message}
+                            </span>
+                          </div>
                         </div>
+                        
+                        <div class="border-t-1 border border-black-900 mt-5"></div>
 
                         <div className="flex-row space-x-4 mt-4 text-right">
                           <button className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">

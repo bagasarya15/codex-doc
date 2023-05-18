@@ -3,6 +3,7 @@ import { Fragment } from 'react';
 import { Transition, Dialog } from '@headlessui/react';
 import apimethod from '../api/apiMethod';
 import { useForm } from 'react-hook-form';
+import Alert from './alert';
 
 const DeleteUser = (props) => {
   const {
@@ -13,13 +14,19 @@ const DeleteUser = (props) => {
 
   const handleRegistration = async (id) => {
     const result = await apimethod.deleteUser(id);
-    alert('Data user & customer berhasil dihapus');
+    const status = result.data.status;
+    const message = result.data.message;
+
+    if(status == 200){
+      Alert.AlertSucces(message)
+    }
+    
     props.closeModal();
   };
 
   const registerOptions = {
     id: {required: 'id tidak ditemukan'},
-    };
+  };
 
   return (
     <div>
@@ -53,8 +60,9 @@ const DeleteUser = (props) => {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900"
                   >
-                    Delete User Id : {props.userById.id}
+                    Konfirmasi Delete
                   </Dialog.Title>
+                  <div class="border-t-1 border border-black-900 mt-3"></div>
                   <div className="mt-2">
                     <form onSubmit={handleSubmit(handleRegistration)}>
                         
@@ -66,13 +74,13 @@ const DeleteUser = (props) => {
                                 defaultValue={props.userById.id} 
                                 {...register('id', registerOptions.id,
                             )}/>
-                            <p className='text-sm font-semibold mb-7'>Yakin ingin menghapus data yang anda pilih ?</p>
+                            <p className='font-semibold mb-7 uppercase text-md text-rose-600'>Hapus data yang anda pilih ?</p>
                           </div>
                         </div>
-
+                        <div class="border-t-1 border border-black-900 mt-3"></div>
                         <div className="flex-row space-x-4 mt-4 text-right">
                           <button className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">
-                            Ya
+                            Ya !
                           </button>
 
                           <button

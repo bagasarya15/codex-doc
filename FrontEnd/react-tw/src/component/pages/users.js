@@ -1,4 +1,5 @@
 import React, { useEffect, useState, Fragment } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
 import apiMethod from '../api/apiMethod';
 import Content from './content';
 import { BsThreeDotsVertical, BsPencil, BsTrash } from 'react-icons/bs';
@@ -6,10 +7,12 @@ import { Menu, Transition } from '@headlessui/react';
 import AddUser from './addUser';
 import EditUser from './editUser';
 import DeleteUser from './deleteUser';
+import Alert from './alert';
 
 const Users = (props) => {
   const [users, setUser] = useState('');
   const [userById, setUserById] = useState('');
+  const [userRole, setUserRole] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
@@ -20,6 +23,7 @@ const Users = (props) => {
     { name: 'Username' },
     { name: 'Firstname' },
     { name: 'Lastname' },
+    { name: 'Role' },
   ];
 
   const GetById = async (id) => {
@@ -33,26 +37,29 @@ const Users = (props) => {
     setUserById(result.data.result)
     setIsDelete(true)
   }
-  
+
   useEffect(() => {
     const getData = async () => {
       const result = await apiMethod.findAll();
+      const resRole = await apiMethod.GetRoles()
       setUser(result.data.result);
-      setPesan(result.data.message)
+      setUserRole(resRole.data.result);
+      setPesan(result.data.message);
     };
     getData();
   }, [isOpen, isEdit, isDelete]);
-
+  
   return (
     <div>
+      <ToastContainer />
       {isOpen ? (
-        <AddUser show={isOpen} closeModal={() => setIsOpen(false)} />
+        <AddUser show={isOpen}  userRole={userRole} closeModal={() => setIsOpen(false)} />
       ) : (
         ''
       )}
 
       {isEdit ? (
-        <EditUser show={isEdit} userById={userById} closeModal={() => setIsEdit(false)} />
+        <EditUser show={isEdit} userRole={userRole} userById={userById} closeModal={() => setIsEdit(false)} />
       ) : (
         ''
       )}
@@ -90,6 +97,9 @@ const Users = (props) => {
                 <td className="px-6 py-3 text-sm text-gray-900 text-left">
                   {dt.customer.lastname}
                 </td>
+                <td className="px-6 py-3 text-sm text-gray-900 text-left">
+                  {dt.role.name}
+                </td>
                 <td className="px-6 py-3 text-sm text-gray-900">
                   <div className="w-full text-right">
                     <Menu as="div" className="relative inline-block text-left">
@@ -118,8 +128,8 @@ const Users = (props) => {
                                 <button onClick={ ()=> GetById(dt.id) }
                                   className={`${
                                     active
-                                      ? 'bg-violet-500 text-white'
-                                      : 'text-gray-900'
+                                      ? 'bg-blue-100 text-blue-900'
+                                      : 'text-blue-900'
                                   } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                                 >
                                   {active ? (
@@ -145,18 +155,18 @@ const Users = (props) => {
                                 <button onClick={ ()=> GetDelete(dt.id)}
                                   className={`${
                                     active
-                                      ? 'bg-violet-500 text-white'
-                                      : 'text-gray-900'
+                                      ? 'bg-blue-100 text-blue-900'
+                                      : 'text-blue-900'
                                   } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                                 >
                                   {active ? (
                                     <BsTrash
-                                      className="mr-2 h-5 w-5 text-violet-400"
+                                      className="mr-2 h-5 w-5 text-black-400"
                                       aria-hidden="true"
                                     />
                                   ) : (
                                     <BsTrash
-                                      className="mr-2 h-5 w-5 text-violet-400"
+                                      className="mr-2 h-5 w-5 text-black-400"
                                       aria-hidden="true"
                                     />
                                   )}
