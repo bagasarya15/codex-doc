@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Fragment } from 'react';
 import { Transition, Dialog } from '@headlessui/react';
 import apimethod from '../api/apiMethod';
 import { useForm } from 'react-hook-form';
 import Alert from './alert';
+import { FaEyeSlash, FaEye } from 'react-icons/fa'
 
 const EditUser = (props) => {
     const {
@@ -12,6 +13,8 @@ const EditUser = (props) => {
         formState: { errors },
     } = useForm();
     
+    const [showPassword, setShowPassword] = useState(false);
+
     const handleRegistration = async (data) => {
         const result = await apimethod.update(data);
         console.log(data);
@@ -108,17 +111,22 @@ const EditUser = (props) => {
                               {errors?.username && errors.username.message}
                             </span>
                           </div>
-                          <div className="col-span-1">
+                          <div className="col-span-1 relative">
                             <input
-                              type="password"
+                              type={showPassword ? 'text' : 'password'}
+                              id="pass-input"
                               name="password"
                               placeholder="Password"
-                              {...register(
-                                'password',
-                                // registerOptions.password,
-                              )}
+                              {...register('password', registerOptions.password)}
                               className="border w-full rounded-lg text-gray-800 py-2 px-2"
                             />
+                            <button
+                              type="button"
+                              onClick={() => setShowPassword(!showPassword)}
+                              className="text-gray-800 absolute top-1/2 right-2 transform -translate-y-1/2"
+                            >
+                              {showPassword ? <FaEyeSlash /> : <FaEye />}
+                            </button>
                             <span className="text-sm text-rose-600">
                               {errors?.password && errors.password.message}
                             </span>

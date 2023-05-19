@@ -60,7 +60,7 @@ const DeleteUser = (props) => {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900"
                   >
-                    Konfirmasi Delete
+                    Delete Confirm
                   </Dialog.Title>
                   <div class="border-t-1 border border-black-900 mt-3"></div>
                   <div className="mt-2">
