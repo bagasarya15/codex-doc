@@ -101,13 +101,6 @@ export class UsersService {
 
   async findOne(id: number) {
     try {
-      // const dataUser = await users.findOne({
-      //   include:[{
-      //     model: customer
-      //   }],
-      //   where:{id:id}
-      // })
-
       const dataUser = await users.findOne({
         where: { id: id },
         include: [
@@ -147,11 +140,20 @@ export class UsersService {
       return error.message;
     }
   }
-    
+
   async update(id: number, updateUserDto: UpdateUserDto) {
     try {
       const dataUser = await users.findByPk(id);
-      if (!dataUser) throw new Error('User tidak ditemukan!');
+
+      const checkUsername = await users.findAll({
+        where: { username: updateUserDto.username }
+      });
+
+      if (checkUsername.length > 0) {
+        if(dataUser.id !== checkUsername[0].id){
+          throw new Error('Username sudah dipakai, coba lagi!')
+        }
+      }
 
       let password: any = dataUser.password;
       let salt: any = await bcrypt.genSalt(10);
@@ -191,7 +193,7 @@ export class UsersService {
       return success;
     } catch (error) {
       let errorMsg = {
-        message: 'Data user & customer gagal diperbarui',
+        message: error.message,
         status: 400
       };
 
