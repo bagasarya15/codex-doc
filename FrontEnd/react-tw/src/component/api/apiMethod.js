@@ -9,23 +9,21 @@ const create = (data) => {
 };
 
 const GetById = async (id) => {
-  return axios.get(`/users/${id}`)
+  return axios.get(`/users/${id}`);
 };
 
 const update = async (data) => {
-  // console.log("h",data);
-  return axios.patch(`/users/${data.id}`, data)
-}
+  return axios.patch(`/users/${data.id}`, data);
+};
 
-const deleteUser = async (id) => {
-  // console.log(id)
-  return axios.delete(`/users/${id.id}`, id)
-}
+const deleteUser = async (data) => {
+  // console.log(data)
+  return axios.delete(`/users/${data.id}`, data);
+};
 
 const GetRoles = () => {
   return axios.get('/roles');
-}
-
+};
 
 export default {
   findAll,
@@ -33,5 +31,5 @@ export default {
   GetById,
   update,
   deleteUser,
-  GetRoles 
+  GetRoles,
 };

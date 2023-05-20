@@ -4,23 +4,6 @@ const Dashboard = () => {
   return (
     <>
       <p className="text-gray-700 text-3xl mb-16 font-bold">Dashboard</p>
-
-      {/* <div className="grid lg:grid-cols-3 gap-5 mb-16">
-          <div className="rounded bg-white h-70 shadow-lg">
-            <img src='./img/aset1.webp'></img>
-            <p className='font-bold '>ROG Phone 6 Diablo Immortal Edition</p>
-            <p>Harga ASUS</p>
-          </div>
-          <div className="rounded bg-white h-40 shadow-lg">
-            <img src='./img/aset2.webp'></img>
-            <p>ROG Phone 6 BATMAN Edition</p>
-          </div>
-          <div className="rounded bg-white h-40 shadow-lg">
-            <img src='./img/aset3.webp'></img>
-            <p>ROG Phone 6 Pro</p>
-          </div>
-        </div> */}
-
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         <div class="bg-white rounded-lg shadow-lg">
           <img

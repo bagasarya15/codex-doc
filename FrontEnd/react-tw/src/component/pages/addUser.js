@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { Fragment } from 'react';
 import { Transition, Dialog } from '@headlessui/react';
 import apimethod from '../api/apiMethod';
 import { useForm } from 'react-hook-form';
 import Alert from './alert';
-import { FaEyeSlash, FaEye } from 'react-icons/fa'
+import { FaEyeSlash, FaEye } from 'react-icons/fa';
 
 const AddUser = (props) => {
   const {
@@ -17,15 +17,15 @@ const AddUser = (props) => {
 
   const handleRegistration = async (data) => {
     const result = await apimethod.create(data);
-    
+
     const status = result.data.status;
     const message = result.data.message;
 
-    if(status){
-      if(status == 200){
-        Alert.AlertSucces(message)
-      }else{
-        Alert.AlertError(message)
+    if (status) {
+      if (status == 200) {
+        Alert.AlertSucces(message);
+      } else {
+        Alert.AlertError(message);
       }
     }
     props.closeModal();
@@ -42,7 +42,7 @@ const AddUser = (props) => {
     },
     firstname: { required: 'first name is required' },
     lastname: { required: 'last name is required' },
-    role_id: { required: 'role required'}
+    role_id: { required: 'role required' },
   };
 
   return (
@@ -107,7 +107,10 @@ const AddUser = (props) => {
                               id="pass-input"
                               name="password"
                               placeholder="Password"
-                              {...register('password', registerOptions.password)}
+                              {...register(
+                                'password',
+                                registerOptions.password,
+                              )}
                               className="border w-full rounded-lg text-gray-800 py-2 px-2"
                             />
                             <button
@@ -153,14 +156,18 @@ const AddUser = (props) => {
                               {errors?.lastname && errors.lastname.message}
                             </span>
                           </div>
-                          <div className='col-span-1'>                            
-                            <select class="bg-gray-50 border border-gray-300 w-full py-2 px-2 text-gray-800 rounded-lg" name='role_id' {...register( 'role_id', registerOptions.role_id,)}>
-                              <option value=''>Choose a role</option>
-                              {props.userRole.map((ur) => (
+                          <div className="col-span-1">
+                            <select
+                              class="bg-gray-50 border border-gray-300 w-full py-2 px-2 text-gray-800 rounded-lg"
+                              name="role_id"
+                              {...register('role_id', registerOptions.role_id)}
+                            >
+                              <option value="">Choose a role</option>
+                              {/* {props.userRole.map((ur) => (
                                 <option key={ur.id} value={ur.id}>
                                   {ur.name}
                                 </option>
-                              ))}
+                              ))} */}
                             </select>
                             <span className="text-sm text-rose-600">
                               {errors?.role_id && errors.role_id.message}

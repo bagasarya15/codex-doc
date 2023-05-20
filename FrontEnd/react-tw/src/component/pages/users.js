@@ -4,19 +4,22 @@ import apiMethod from '../api/apiMethod';
 import Content from './content';
 import { BsThreeDotsVertical, BsPencil, BsTrash } from 'react-icons/bs';
 import { Menu, Transition } from '@headlessui/react';
-import AddUser from './addUser';
-import EditUser from './editUser';
-import DeleteUser from './deleteUser';
-import Alert from './alert';
+import AddUser from './users/createUser';
+import EditUser from './users/updateUser';
+import DeleteUser from './users/deleteUser';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAll } from '../../redux/action/actionReducer';
+import { Link } from 'react-router-dom';
 
 const Users = (props) => {
-  const [users, setUser] = useState('');
   const [userById, setUserById] = useState('');
   const [userRole, setUserRole] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
-  const [pesan, setPesan] = useState('')
+
+  let { user, message, refresh } = useSelector((state) => state.userReducer);
+  const dispatch = useDispatch();
 
   const column = [
     { name: '#No' },
@@ -26,46 +29,40 @@ const Users = (props) => {
     { name: 'Role' },
   ];
 
-  const GetById = async (id) => {
-    const result = await apiMethod.GetById(id)
-    setUserById(result.data.result)
-    setIsEdit(true)
-  }
-
-  const GetDelete = async (id) => {
-    const result = await apiMethod.GetById(id)
-    setUserById(result.data.result)
-    setIsDelete(true)
-  }
-
   useEffect(() => {
-    const getData = async () => {
-      const result = await apiMethod.findAll();
-      const resRole = await apiMethod.GetRoles()
-      setUser(result.data.result);
-      setUserRole(resRole.data.result);
-      setPesan(result.data.message);
-    };
-    getData();
-  }, [isOpen, isEdit, isDelete]);
-  
+    dispatch(getAll());
+  }, [refresh]);
+
   return (
     <div>
       <ToastContainer />
       {isOpen ? (
-        <AddUser show={isOpen}  userRole={userRole} closeModal={() => setIsOpen(false)} />
+        <AddUser
+          show={isOpen}
+          userRole={userRole}
+          closeModal={() => setIsOpen(false)}
+        />
       ) : (
         ''
       )}
 
       {isEdit ? (
-        <EditUser show={isEdit} userRole={userRole} userById={userById} closeModal={() => setIsEdit(false)} />
+        <EditUser
+          show={isEdit}
+          userRole={userRole}
+          userById={userById}
+          closeModal={() => setIsEdit(false)}
+        />
       ) : (
         ''
       )}
 
       {isDelete ? (
-        <DeleteUser show={isDelete} userById={userById} closeModal={() => setIsDelete(false)} />
+        <DeleteUser
+          show={isDelete}
+          userById={userById}
+          closeModal={() => setIsDelete(false)}
+        />
       ) : (
         ''
       )}
@@ -83,7 +80,7 @@ const Users = (props) => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-100">
-            {(users || []).map((dt, index) => (
+            {(user || []).map((dt, index) => (
               <tr key={dt.id}>
                 <td className="px-6 py-3 text-sm text-gray-900 text-left">
                   {index + 1}
@@ -125,7 +122,9 @@ const Users = (props) => {
                           <div className="px-1 py-1 ">
                             <Menu.Item>
                               {({ active }) => (
-                                <button onClick={ ()=> GetById(dt.id) }
+                                <Link
+                                  to={`/edit-users/${dt.id}`}
+                                  // onClick={ ()=> GetById(dt.id) }
                                   className={`${
                                     active
                                       ? 'bg-blue-100 text-blue-900'
@@ -144,7 +143,7 @@ const Users = (props) => {
                                     />
                                   )}
                                   Edit
-                                </button>
+                                </Link>
                               )}
                             </Menu.Item>
                           </div>
@@ -152,7 +151,8 @@ const Users = (props) => {
                           <div className="px-1 py-1">
                             <Menu.Item>
                               {({ active }) => (
-                                <button onClick={ ()=> GetDelete(dt.id)}
+                                <button
+                                  onClick={() => {setUserById(dt); setIsDelete(true)}}
                                   className={`${
                                     active
                                       ? 'bg-blue-100 text-blue-900'

@@ -1,9 +1,11 @@
 import React from 'react';
 import { Fragment } from 'react';
 import { Transition, Dialog } from '@headlessui/react';
-import apimethod from '../api/apiMethod';
+import apimethod from '../../api/apiMethod';
 import { useForm } from 'react-hook-form';
-import Alert from './alert';
+import Alert from '../alert';
+import { useDispatch } from 'react-redux';
+import { DelUser } from '../../../redux/action/actionReducer';
 
 const DeleteUser = (props) => {
   const {
@@ -12,14 +14,13 @@ const DeleteUser = (props) => {
     formState: { errors },
   } = useForm();
 
-  const handleRegistration = async (id) => {
-    const result = await apimethod.deleteUser(id);
-    const status = result.data.status;
-    const message = result.data.message;
+  const dispatch = useDispatch();
 
-    if (status == 200) {
-      Alert.AlertSucces(message);
-    }
+  const handleRegistration = async (data) => {
+    
+    dispatch(DelUser(data))
+
+    
 
     props.closeModal();
   };
