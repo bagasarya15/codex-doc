@@ -1,0 +1,17 @@
+async GetUsersPaginate(limit:any, offset:any) {
+    try {
+      
+      const jumlah:any = await this.sequelize.query('SELECT COUNT(users.id) FROM users JOIN customer ON customer.user_id = users.id');
+
+      const result = await this.sequelize.query(`SELECT users.id ,users.username, users.password, customer.firstname, customer.lastname, roles.name AS role FROM users JOIN customer ON customer.user_id = users.id JOIN roles ON users.role_id = roles.id ORDER BY users.id LIMIT ${limit} OFFSET ${offset}`);
+
+      return {
+        status: 200,
+        message: 'sukses',
+        totalData: jumlah[0][0].count,
+        result: result[0],
+      }
+    } catch (error) {
+      return error.message
+    }
+  }

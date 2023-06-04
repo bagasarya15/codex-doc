@@ -1,0 +1,27 @@
+react hook >> function
+
+parameter optional = depedency
+parameter wajib anonymouse function
+
+Action type memiliki tujuan utama untuk memberikan identitas unik kepada setiap action yang ada dalam aplikasi Redux. Tujuan ini sangat penting dalam proses dispatching dan handling actions.
+
+redux = state management ( buat database dilokal )
+
+use state inisialiasi nilai awal variabel
+
+useEffect adalah salah satu hook pada React yang digunakan untuk menangani efek samping (side effects) dalam komponen fungsional. Efek samping adalah tindakan yang tidak langsung terkait dengan rendering UI, seperti mengambil data dari API, berlangganan ke event, atau melakukan manipulasi DOM.
+
+State management (pengelolaan state) adalah proses mengatur, menyimpan, dan mengelola data atau informasi yang diperlukan oleh sebuah aplikasi dalam rentang waktu tertentu. State dalam konteks pengembangan perangkat lunak merujuk pada data yang menyimpan status, kondisi, dan konteks aplikasi yang dapat berubah sepanjang waktu.
+
+Reducer adalah fungsi yang digunakan dalam arsitektur Redux untuk mengubah state aplikasi berdasarkan action yang diterima. Fungsi reducer memiliki dua parameter: state saat ini dan action yang dipicu. Reducer mengambil state saat ini, action, dan mengembalikan state yang baru.
+dan mengupdate state
+
+Pada dasarnya, reducer bertanggung jawab untuk menerima action dan mengubah state aplikasi secara terprediksi. Reducer haruslah sebuah pure function, yang berarti output yang dihasilkan hanya bergantung pada inputnya dan tidak mengubah nilai di luar fungsi tersebut. Reducer tidak boleh melakukan perubahan langsung terhadap state saat ini, melainkan harus mengembalikan state yang baru.
+
+Fungsi dispatch dalam arsitektur Redux digunakan untuk memicu (trigger) pengiriman (dispatching) sebuah action ke store Redux. Dispatching action adalah cara untuk memberitahu store bahwa perubahan state perlu dilakukan berdasarkan action yang dijalankan.
+
+jsx (frontend) > menulis komponen react
+tsx (backend) > 
+
+redux tam
+redux saga
