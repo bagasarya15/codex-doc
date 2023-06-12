@@ -1,0 +1,43 @@
+
+  async signIn(signInDto: SignInDto) {
+    try {
+      const query = `SELECT * FROM users.selectUsers WHERE user_name = '${signInDto.user_name}' OR pmail_address = '${signInDto.pmail_address}'`;
+      
+      const dataUser: any = await this.sequelize.query(query);
+
+      if (dataUser[0].length === 0) {
+        throw new Error('username or email wrong');
+      }
+
+      const matchPassword = await bcrypt.compare(
+        signInDto.user_password,
+        dataUser[0][0].user_password,
+      );
+
+      if (!matchPassword) throw new Error('wrong password');
+
+      const token = jwt.sign(
+        { user_name: dataUser.user_name },
+        process.env.SECRET_KEY,
+        {
+          expiresIn: '10m',
+        },
+      );
+
+      const succes = {
+        message: 'login succes',
+        status: 200,
+        token: token,
+        result: dataUser[0],
+      };
+
+      return succes;
+    } catch (error) {
+      const errorMsg = {
+        status: 400,
+        message: error.message,
+      };
+
+      return errorMsg;
+    }
+  }

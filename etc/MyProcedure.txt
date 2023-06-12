@@ -1,0 +1,161 @@
+CREATE OR REPLACE PROCEDURE users.SignUpPC (
+    IN p_username VARCHAR,
+    IN p_password VARCHAR,
+    IN p_phone VARCHAR,
+    IN p_email VARCHAR,
+    IN p_role_id INT
+)
+LANGUAGE plpgsql
+AS
+$$
+DECLARE 
+    new_business_id INT;
+    new_user_id INT;
+    update_role INT;
+BEGIN
+    INSERT INTO users.business_entity DEFAULT VALUES
+    RETURNING entity_id INTO new_business_id;
+
+    INSERT INTO users.users (user_entity_id, user_name, user_password)
+    VALUES (new_business_id, p_username, p_password)
+    RETURNING user_entity_id INTO new_user_id;
+    
+    INSERT INTO users.users_phones (uspo_entity_id, uspo_number)
+    VALUES (new_user_id, p_phone);
+    
+    INSERT INTO users.users_email (pmail_entity_id, pmail_address)
+    VALUES (new_user_id, p_email);
+    
+    INSERT INTO users.users_roles (usro_entity_id, usro_role_id)
+    VALUES (new_user_id, p_role_id)
+	RETURNING usro_role_id INTO update_role;
+	
+	UPDATE users.users SET user_current_role = update_role
+	WHERE user_entity_id = new_user_id;
+    
+END
+$$;
+
+ALTER TABLE users.users
+ADD CONSTRAINT fk_users_current_role
+FOREIGN KEY (user_current_role, user_entity_id)
+REFERENCES users.users_roles (usro_role_id, usro_entity_id)
+ON DELETE CASCADE ON UPDATE CASCADE
+
+CALL users.SignUpPC('Bagas', 'password', '123456', 'bgs.doe@example.com', 1);
+
+select * from users.users
+
+
+
+CREATE OR REPLACE PROCEDURE users.SignUpProcedure (IN data json)
+LANGUAGE plpgsql
+AS
+$$
+DECLARE 
+	new_entity_id iNT;
+	new_usro_id INT;
+BEGIN
+
+	WITH business_id AS (
+		INSERT INTO users.business_entity DEFAULT VALUES
+		RETURNING entity_id 
+	)
+	SELECT entity_id INTO new_entity_id FROM business_id;
+	
+	INSERT INTO users.users (user_entity_id, user_name, user_password)
+    SELECT new_entity_id, user_name, user_password
+    FROM json_to_recordset(data) users (user_entity_id INT, user_name VARCHAR, user_password VARCHAR);
+	
+	INSERT INTO users.users_phones (uspo_entity_id, uspo_number)
+	SELECT new_entity_id, uspo_number
+	FROM json_to_recordset(data) users (uspo_entity_id INT, uspo_number VARCHAR);
+	
+	INSERT INTO users.users_email (pmail_entity_id, pmail_address )
+	SELECT new_entity_id, pmail_address
+	FROM json_to_recordset(data) users_email (pmail_entity_id INT, pmail_address VARCHAR);
+	
+	INSERT INTO users.users_role(usro_entity_id, usro_role_id)
+	SELECT new_entity_id, usro_role_id
+	FROM json_to_recordset(data) users_roles (usro_entity_id INT, usro_role_id INT);
+	
+END
+$$;
+
+CALL users.SignUpProcedure('{"user_name": "John", "user_password": "password", "uspo_number": "123456789", "pmail_address": "john@example.com", "usro_role_id": 1}');
+
+CREATE OR REPLACE PROCEDURE users.SignUpPC (
+    IN user_name VARCHAR,
+    IN user_password VARCHAR,
+    IN uspo_number VARCHAR,
+    IN pmail_address VARCHAR,
+	IN usro_role_id INT
+)
+LANGUAGE plpgsql
+AS
+$$
+DECLARE 
+    new_entity_id INT;
+BEGIN
+    WITH business_id AS (
+        INSERT INTO users.business_entity DEFAULT VALUES
+        RETURNING entity_id 
+    )
+    SELECT entity_id INTO new_entity_id FROM business_id;
+
+    INSERT INTO users.users (user_entity_id, user_name, user_password)
+    VALUES (new_entity_id, user_name, user_password);
+    
+    INSERT INTO users.users_phones (uspo_entity_id, uspo_number)
+    VALUES (new_entity_id, uspo_number);
+    
+    INSERT INTO users.users_email (pmail_entity_id, pmail_address)
+    VALUES (new_entity_id, pmail_address);
+    
+    INSERT INTO users.users_roles (usro_entity_id, usro_role_id)
+	VALUES (new_entity_id, usro_role_id);
+    
+END
+$$;
+
+CALL users."signuppc"('John', 'password', '123456789', 'john@example.com', 1);
+
+CREATE OR REPLACE PROCEDURE users.SignUpPC (
+    IN username VARCHAR,
+    IN password VARCHAR,
+    IN phone VARCHAR,
+    IN email VARCHAR,
+    IN role_id INT
+)
+LANGUAGE plpgsql
+AS
+$$
+DECLARE 
+    new_entity_id INT;
+BEGIN
+    WITH business_id AS (
+        INSERT INTO users.business_entity DEFAULT VALUES
+        RETURNING entity_id 
+    )
+    SELECT entity_id INTO new_entity_id FROM business_id;
+
+    INSERT INTO users.users (user_entity_id, user_name, user_password)
+    VALUES (new_entity_id, username, password);
+    
+    INSERT INTO users.users_phones (uspo_entity_id, uspo_number)
+    VALUES (new_entity_id, phone);
+    
+    INSERT INTO users.users_email (pmail_entity_id, pmail_address)
+    VALUES (new_entity_id, email);
+    
+    INSERT INTO users.users_roles (usro_entity_id, usro_role_id)
+	VALUES (new_entity_id, role_id);
+    
+END
+$$;
+
+CALL users.SignUpPC('JohnDoe', 'password123', '123456789', 'john.doe@example.com', 1);
+
+
+
+
