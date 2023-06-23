@@ -1,30 +1,5 @@
-CREATE OR REPLACE PROCEDURE users.add_address (
-    IN first_address VARCHAR,
-    IN second_address VARCHAR,
-    IN code_pos VARCHAR,
-	IN city_id INT,
-	IN user_id INT,
-    IN address_type_id INT
-)
-LANGUAGE plpgsql
-AS
-$$
-DECLARE 
-    new_address_id INT;
-BEGIN
-    INSERT INTO master.address(addr_line1, addr_line2, addr_postal_code, addr_city_id)
-	VALUES(first_address, second_address, code_pos, city_id)
-    RETURNING addr_id INTO new_address_id;
-	
-	INSERT INTO users.users_address(etad_addr_id, etad_entity_id, etad_adty_id)
-	VALUES (new_address_id, user_id, address_type_id);
-END;
-$$;
-
-call users.add_address('Jalan Depok 1', 'Test', '16439', 1, 2, 1)
-
-
 select * from users.users
+select * from users.roles
 select * from master.city
 select * from master.address_type
 select * from master.address
@@ -32,8 +7,18 @@ select * from users.users_address
 select * from users.users_education
 select * from users.business_entity
 select * from users.users_experiences
-truncate table users.business_entity restart identity cascade
+select * from users.users
+select * from users.users_roles
+select * from users.users_media
+select * from users.users_phones
 
+truncate table users.users_media restart identity
+
+
+select users.user_entity_id, users.user_name, users.user_current_role, users_roles.usro_entity_id, users_roles.usro_role_id
+from users.users JOIN users.users_roles ON users.user_entity_id = users_roles.usro_entity_id
+
+truncate table users.business_entity restart identity cascade
 
 INSERT INTO users.users_experiences(usex_entity_id, usex_title) values (2, 'Sarjana Komedi')
 select users.user_name, users_experiences.usex_title from users.users join users.users_experiences
@@ -70,4 +55,52 @@ select * from users.users_skill
 
 insert into users.users_skill(uski_entity_id, uski_skty_name) values (2, 'javascript')
 
-
+call users.apply_jobs(9, 'hendri', 'prasmono', 'test-photo.jpg','codex academy university', 'Diploma', 'd3 informatika', '08127', 'mycv.pdf', 'pdf', 7 )
+CREATE OR REPLACE PROCEDURE users.apply_jobs (
+    IN user_id INT,
+    IN firstname VARCHAR,
+    IN lastname VARCHAR,
+	IN userphoto VARCHAR,
+    IN user_school VARCHAR,
+    IN user_degree VARCHAR,
+    IN user_field_study VARCHAR,
+	IN user_phone_number VARCHAR,
+	IN filename VARCHAR,
+	IN filetype VARCHAR,
+	IN role_id INT
+)
+LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    update_role INT;
+BEGIN
+    UPDATE users.users_education
+    SET usdu_school = user_school,
+		usdu_degree = user_degree,
+		usdu_field_study = user_field_study
+    WHERE usdu_entity_id = user_id;
+	
+	UPDATE users.users_phones 
+	SET uspo_number = user_phone_number 
+	WHERE uspo_entity_id = user_id;
+	
+	UPDATE users.users_media
+	SET usme_filename = filename,
+		usme_filetype = filetype 
+	WHERE usme_entity_id = user_id;
+	
+	UPDATE users.users_roles
+	SET usro_role_id = role_id
+	WHERE usro_entity_id = user_id
+	RETURNING usro_role_id INTO update_role;
+	
+	UPDATE users.users
+    SET user_first_name = firstname,
+        user_last_name = lastname,
+		user_photo = userphoto,
+		user_current_role = update_role
+    WHERE user_entity_id = user_id;
+    
+END;
+$$;
